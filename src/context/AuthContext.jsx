@@ -4,8 +4,6 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
   GoogleAuthProvider,
   signOut,
   sendEmailVerification,
@@ -70,48 +68,16 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if we're returning from a Google redirect
-    const isRedirecting = sessionStorage.getItem("google_redirect") === "true";
-
-    const init = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result?.user) {
-          await createUserDoc(result.user);
-        }
-      } catch (err) {
-        console.error("Redirect result error:", err.code);
-      } finally {
-        sessionStorage.removeItem("google_redirect");
+    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const profile = await fetchUserProfile(firebaseUser);
+        setUser(profile);
+      } else {
+        setUser(null);
       }
-    };
-
-    if (isRedirecting) {
-      // Block everything until redirect result is processed
-      init().then(() => {
-        const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
-          if (firebaseUser) {
-            const profile = await fetchUserProfile(firebaseUser);
-            setUser(profile);
-          } else {
-            setUser(null);
-          }
-          setLoading(false);
-        });
-        return () => unsub();
-      });
-    } else {
-      const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
-        if (firebaseUser) {
-          const profile = await fetchUserProfile(firebaseUser);
-          setUser(profile);
-        } else {
-          setUser(null);
-        }
-        setLoading(false);
-      });
-      return unsub;
-    }
+      setLoading(false);
+    });
+    return unsub;
   }, []);
 
   const login = async (email, password) => {
@@ -139,15 +105,8 @@ export function AuthProvider({ children }) {
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    const isLocalhost = window.location.hostname === "localhost";
-    if (isLocalhost) {
-      const cred = await signInWithPopup(auth, provider);
-      await createUserDoc(cred.user);
-    } else {
-      // Set flag BEFORE redirect so we know to wait for getRedirectResult on return
-      sessionStorage.setItem("google_redirect", "true");
-      await signInWithRedirect(auth, provider);
-    }
+    const cred = await signInWithPopup(auth, provider);
+    await createUserDoc(cred.user);
   };
 
   const logout = () => signOut(auth);
