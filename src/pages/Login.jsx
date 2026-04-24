@@ -42,8 +42,14 @@ export default function Login() {
       await loginWithGoogle();
       toast.success("Signed in with Google!");
       navigate("/dashboard");
-    } catch {
-      toast.error("Google sign in failed.");
+    } catch (err) {
+      console.error("Google error:", err.code, err.message);
+      const msg =
+        err.code === "auth/popup-blocked"        ? "Popup was blocked. Please allow popups for this site." :
+        err.code === "auth/popup-closed-by-user" ? "Sign in cancelled." :
+        err.code === "auth/unauthorized-domain"  ? "This domain is not authorized. Contact support." :
+        "Google sign in failed. Please try again.";
+      toast.error(msg);
     }
   };
 
@@ -107,6 +113,18 @@ export default function Login() {
               <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-3 bottom-3 text-slate-500 hover:text-slate-300 transition-colors">
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
+            </div>
+
+            <div className="flex justify-end">
+              <Link
+                to="/forgot-password"
+                className="text-xs transition-colors"
+                style={{ color: isDark ? "#475569" : "#94a3b8" }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = "#06b6d4"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = isDark ? "#475569" : "#94a3b8"; }}
+              >
+                Forgot password?
+              </Link>
             </div>
 
             <Button type="submit" disabled={loading} className="w-full" size="lg">

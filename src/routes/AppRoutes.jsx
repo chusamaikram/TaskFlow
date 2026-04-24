@@ -6,6 +6,7 @@ import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import Dashboard from "../pages/Dashboard";
 import Profile from "../pages/Profile";
+import ForgotPassword from "../pages/ForgotPassword";
 import AppLoader from "../components/ui/AppLoader";
 
 function ProtectedRoute({ children }) {
@@ -27,8 +28,9 @@ export default function AppRoutes() {
     <Routes>
       <Route path="/" element={<Landing />} />
 
-      <Route path="/login"  element={<GuestRoute><Login /></GuestRoute>} />
-      <Route path="/signup" element={<GuestRoute><Signup /></GuestRoute>} />
+      <Route path="/login"        element={<GuestRoute><Login /></GuestRoute>} />
+      <Route path="/signup"       element={<GuestRoute><Signup /></GuestRoute>} />
+      <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
 
       <Route
         path="/"

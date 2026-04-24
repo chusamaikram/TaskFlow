@@ -6,6 +6,8 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
+  sendEmailVerification,
+  sendPasswordResetEmail,
   updateProfile as firebaseUpdateProfile,
 } from "firebase/auth";
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
@@ -87,8 +89,8 @@ export function AuthProvider({ children }) {
   const signup = async (name, email, password) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     await firebaseUpdateProfile(cred.user, { displayName: name });
+    await sendEmailVerification(cred.user);
     await createUserDoc({ ...cred.user, displayName: name }, { name });
-    // Set immediately so UI doesn't wait for onAuthStateChanged round-trip
     setUser({
       uid:      cred.user.uid,
       name,
@@ -103,11 +105,14 @@ export function AuthProvider({ children }) {
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
     const cred = await signInWithPopup(auth, provider);
     await createUserDoc(cred.user);
   };
 
   const logout = () => signOut(auth);
+
+  const resetPassword = (email) => sendPasswordResetEmail(auth, email);
 
   const updateProfile = async (updates) => {
     if (!auth.currentUser) return;
@@ -128,7 +133,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, loginWithGoogle, logout, updateProfile }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, loginWithGoogle, logout, resetPassword, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
