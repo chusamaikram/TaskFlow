@@ -70,14 +70,29 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Handle redirect result when user comes back from Google sign-in
-    getRedirectResult(auth).then(async (result) => {
-      if (result?.user) {
-        await createUserDoc(result.user);
+    let authResolved = false;
+
+    // getRedirectResult MUST complete before we let onAuthStateChanged
+    // set loading=false, otherwise GuestRoute redirects to /login too early
+    const init = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result?.user) {
+          await createUserDoc(result.user);
+          // onAuthStateChanged will fire right after and set the user
+        }
+      } catch {
+        // no redirect in progress — safe to ignore
+      } finally {
+        authResolved = true;
       }
-    }).catch(() => {});
+    };
+
+    const redirectPromise = init();
 
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      // Wait for redirect result to finish before resolving loading
+      await redirectPromise;
       if (firebaseUser) {
         const profile = await fetchUserProfile(firebaseUser);
         setUser(profile);
@@ -86,6 +101,7 @@ export function AuthProvider({ children }) {
       }
       setLoading(false);
     });
+
     return unsub;
   }, []);
 
@@ -114,16 +130,12 @@ export function AuthProvider({ children }) {
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
     const isLocalhost = window.location.hostname === "localhost";
     if (isLocalhost) {
-      // Popup works fine on localhost
       const cred = await signInWithPopup(auth, provider);
       await createUserDoc(cred.user);
     } else {
-      // Use redirect on production — avoids popup-blocked errors
       await signInWithRedirect(auth, provider);
-      // Page will reload and getRedirectResult in useEffect handles the rest
     }
   };
 
