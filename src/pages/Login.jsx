@@ -40,8 +40,12 @@ export default function Login() {
   const handleGoogle = async () => {
     try {
       await loginWithGoogle();
-      toast.success("Signed in with Google!");
-      navigate("/dashboard");
+      // On localhost popup resolves here — navigate to dashboard
+      // On production redirect takes over — page reloads automatically
+      if (window.location.hostname === "localhost") {
+        toast.success("Signed in with Google!");
+        navigate("/dashboard");
+      }
     } catch (err) {
       console.error("Google error:", err.code, err.message);
       const msg =

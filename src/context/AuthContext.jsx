@@ -4,6 +4,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   signOut,
   sendEmailVerification,
@@ -68,6 +70,13 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Handle redirect result when user comes back from Google sign-in
+    getRedirectResult(auth).then(async (result) => {
+      if (result?.user) {
+        await createUserDoc(result.user);
+      }
+    }).catch(() => {});
+
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const profile = await fetchUserProfile(firebaseUser);
@@ -106,8 +115,16 @@ export function AuthProvider({ children }) {
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
-    const cred = await signInWithPopup(auth, provider);
-    await createUserDoc(cred.user);
+    const isLocalhost = window.location.hostname === "localhost";
+    if (isLocalhost) {
+      // Popup works fine on localhost
+      const cred = await signInWithPopup(auth, provider);
+      await createUserDoc(cred.user);
+    } else {
+      // Use redirect on production — avoids popup-blocked errors
+      await signInWithRedirect(auth, provider);
+      // Page will reload and getRedirectResult in useEffect handles the rest
+    }
   };
 
   const logout = () => signOut(auth);

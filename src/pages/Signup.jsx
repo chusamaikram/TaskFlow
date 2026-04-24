@@ -48,8 +48,10 @@ export default function Signup() {
   const handleGoogle = async () => {
     try {
       await loginWithGoogle();
-      toast.success("Signed up with Google!");
-      navigate("/dashboard");
+      if (window.location.hostname === "localhost") {
+        toast.success("Signed up with Google!");
+        navigate("/dashboard");
+      }
     } catch (err) {
       console.error("Google error:", err.code, err.message);
       const msg =
