@@ -70,21 +70,26 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Handle redirect result from Google sign-in
-    getRedirectResult(auth).then(async (result) => {
-      if (result?.user) await createUserDoc(result.user);
-    }).catch(() => {});
+    let unsub;
 
-    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const profile = await fetchUserProfile(firebaseUser);
-        setUser(profile);
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    });
-    return unsub;
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result?.user) await createUserDoc(result.user);
+      })
+      .catch(() => {})
+      .finally(() => {
+        unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+          if (firebaseUser) {
+            const profile = await fetchUserProfile(firebaseUser);
+            setUser(profile);
+          } else {
+            setUser(null);
+          }
+          setLoading(false);
+        });
+      });
+
+    return () => unsub?.();
   }, []);
 
   const login = async (email, password) => {

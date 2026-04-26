@@ -40,16 +40,13 @@ export default function Login() {
   const handleGoogle = async () => {
     try {
       await loginWithGoogle();
-      // On localhost popup resolves here — navigate to dashboard
-      // On production redirect takes over — page reloads automatically
-      if (window.location.hostname === "localhost") {
-        toast.success("Signed in with Google!");
-        navigate("/dashboard");
-      }
+      // popup path (localhost) — redirect path handles itself via GuestRoute
+      toast.success("Signed in with Google!");
+      navigate("/dashboard");
     } catch (err) {
-      console.error("Google error:", err.code, err.message);
+      if (err.code === "auth/redirect-cancelled-by-user") return;
       const msg =
-        err.code === "auth/popup-blocked"        ? "Popup was blocked. Please allow popups for this site." :
+        err.code === "auth/popup-blocked"        ? "Popup was blocked. Redirecting..." :
         err.code === "auth/popup-closed-by-user" ? "Sign in cancelled." :
         err.code === "auth/unauthorized-domain"  ? "This domain is not authorized. Contact support." :
         "Google sign in failed. Please try again.";
