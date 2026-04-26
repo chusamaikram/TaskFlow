@@ -4,6 +4,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   signOut,
   sendEmailVerification,
@@ -68,6 +70,11 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Handle redirect result from Google sign-in
+    getRedirectResult(auth).then(async (result) => {
+      if (result?.user) await createUserDoc(result.user);
+    }).catch(() => {});
+
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const profile = await fetchUserProfile(firebaseUser);
@@ -105,8 +112,21 @@ export function AuthProvider({ children }) {
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    const cred = await signInWithPopup(auth, provider);
-    await createUserDoc(cred.user);
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      await signInWithRedirect(auth, provider);
+    } else {
+      try {
+        const cred = await signInWithPopup(auth, provider);
+        await createUserDoc(cred.user);
+      } catch (err) {
+        if (err.code === "auth/popup-blocked" || err.code === "auth/popup-closed-by-user") {
+          await signInWithRedirect(auth, provider);
+        } else {
+          throw err;
+        }
+      }
+    }
   };
 
   const logout = () => signOut(auth);
