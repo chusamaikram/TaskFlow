@@ -70,26 +70,24 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let unsub;
-
+    // On production, after Google redirect, getRedirectResult fires before onAuthStateChanged
+    // createUserDoc here ensures the Firestore doc exists before the auth state listener picks up the user
     getRedirectResult(auth)
       .then(async (result) => {
         if (result?.user) await createUserDoc(result.user);
       })
-      .catch(() => {})
-      .finally(() => {
-        unsub = onAuthStateChanged(auth, async (firebaseUser) => {
-          if (firebaseUser) {
-            const profile = await fetchUserProfile(firebaseUser);
-            setUser(profile);
-          } else {
-            setUser(null);
-          }
-          setLoading(false);
-        });
-      });
+      .catch(() => {});
 
-    return () => unsub?.();
+    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const profile = await fetchUserProfile(firebaseUser);
+        setUser(profile);
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+    return unsub;
   }, []);
 
   const login = async (email, password) => {
@@ -117,20 +115,11 @@ export function AuthProvider({ children }) {
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-    if (isMobile) {
-      await signInWithRedirect(auth, provider);
+    if (window.location.hostname === "localhost") {
+      const cred = await signInWithPopup(auth, provider);
+      await createUserDoc(cred.user);
     } else {
-      try {
-        const cred = await signInWithPopup(auth, provider);
-        await createUserDoc(cred.user);
-      } catch (err) {
-        if (err.code === "auth/popup-blocked" || err.code === "auth/popup-closed-by-user") {
-          await signInWithRedirect(auth, provider);
-        } else {
-          throw err;
-        }
-      }
+      await signInWithRedirect(auth, provider);
     }
   };
 
