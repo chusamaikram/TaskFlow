@@ -22,20 +22,8 @@ import AppLoader from "../components/ui/AppLoader";
 // }
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
-
-  console.log("🛡 ProtectedRoute →", { user, loading });
-
-  if (loading) {
-    console.log("⏳ ProtectedRoute waiting for auth...");
-    return null;
-  }
-
-  if (!user) {
-    console.log("🚫 No user → redirecting to login");
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
+  if (loading) return null;
+  return user ? children : <Navigate to="/login" replace />;
 }
 
 // Prevent logged-in users from accessing login/signup
@@ -49,19 +37,12 @@ function ProtectedRoute({ children }) {
 
 function GuestRoute({ children }) {
   const { user, loading } = useAuth();
-
-  console.log("👤 GuestRoute →", { user, loading });
-
   if (loading) return null;
-
   return !user ? children : <Navigate to="/dashboard" replace />;
 }
 
 export default function AppRoutes() {
   const { loading } = useAuth();
-  console.log("📍 AppRoutes render → loading:", loading);
-
-  // Wait until Firebase restores authentication state
   if (loading) {
     return <AppLoader message="Authenticating..." />;
   }
