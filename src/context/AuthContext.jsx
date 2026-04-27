@@ -42,6 +42,7 @@ async function fetchUserProfile(firebaseUser) {
       bio:      data.bio      || "",
       location: data.location || "",
       name:     data.name     || base.name,
+      avatar: data.avatar     || ""
     };
   }
   return { ...base, role: "Team Member", bio: "", location: "" };
