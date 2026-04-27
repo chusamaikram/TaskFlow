@@ -24,7 +24,7 @@ function SidebarContent({ collapsed, onCollapse, onClose, isMobile }) {
             <Zap size={15} className="text-dark-900" fill="currentColor" />
           </div>
           {(!collapsed || isMobile) && (
-            <span className="text-lg font-bold font-display text-slate-100 light:text-slate-900 truncate">TaskFlow</span>
+            <span className="text-lg font-bold font-display text-slate-900 dark:text-slate-100 truncate">TaskFlow</span>
           )}
         </div>
         {/* Mobile close button */}
@@ -50,7 +50,7 @@ function SidebarContent({ collapsed, onCollapse, onClose, isMobile }) {
         </div>
       )}
 
-      <div className="h-px bg-white/[0.05] mx-4 light:bg-slate-100" />
+      <div className="h-px bg-slate-100 dark:bg-white/[0.05] mx-4" />
 
       {/* Nav */}
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto overflow-x-hidden">
@@ -80,7 +80,7 @@ function SidebarContent({ collapsed, onCollapse, onClose, isMobile }) {
           {(!collapsed || isMobile) && (
             <>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold font-display text-slate-100 light:text-slate-900 truncate">{user?.name}</p>
+                <p className="text-sm font-semibold font-display text-slate-900 dark:text-slate-100 truncate">{user?.name}</p>
                 <p className="text-xs text-slate-500 truncate">{user?.role || "Team Member"}</p>
               </div>
               <button onClick={handleLogout} className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/[0.08] transition-colors flex-shrink-0" title="Logout">
@@ -114,12 +114,12 @@ export default function Sidebar({ mobileOpen, onMobileClose }) {
       )}
 
       {/* Mobile drawer */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-72 flex flex-col bg-gradient-to-b from-dark-800 to-dark-900 border-r border-white/[0.06] light:bg-white light:border-slate-200 transition-transform duration-300 md:hidden ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-72 flex flex-col bg-white border-r border-slate-200 dark:bg-gradient-to-b dark:from-dark-800 dark:to-dark-900 dark:border-white/[0.06] transition-transform duration-300 md:hidden ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <SidebarContent collapsed={false} onCollapse={setCollapsed} onClose={onMobileClose} isMobile />
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className={`hidden md:flex flex-col ${collapsed ? "w-[68px]" : "w-64"} h-screen sticky top-0 flex-shrink-0 transition-all duration-200 bg-gradient-to-b from-dark-800 to-dark-900 border-r border-white/[0.06] light:bg-white light:border-slate-200`}>
+      <aside className={`hidden md:flex flex-col ${collapsed ? "w-[68px]" : "w-64"} h-screen sticky top-0 flex-shrink-0 transition-all duration-200 bg-white border-r border-slate-200 dark:bg-gradient-to-b dark:from-dark-800 dark:to-dark-900 dark:border-white/[0.06]`}>
         <SidebarContent collapsed={collapsed} onCollapse={setCollapsed} onClose={onMobileClose} isMobile={false} />
       </aside>
     </>

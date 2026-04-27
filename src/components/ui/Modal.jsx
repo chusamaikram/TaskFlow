@@ -19,12 +19,12 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" })
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 bg-dark-900/80 dark:bg-dark-900/85 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 bg-slate-900/50 dark:bg-dark-900/85 backdrop-blur-sm"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className={`w-full ${sizeMap[size]} animate-slide-up flex flex-col max-h-[calc(100vh-4rem)] rounded-2xl bg-[#0b1e2d] border border-cyan-500/15 shadow-[0_0_60px_rgba(6,182,212,0.08),0_24px_64px_rgba(0,0,0,0.6)] light:bg-white light:border-slate-200`}>
-        <div className="flex items-center justify-between px-6 pt-5 pb-4 flex-shrink-0 border-b border-white/[0.06] light:border-slate-100">
-          <h2 className="text-base font-bold font-display text-slate-100 light:text-slate-900">{title}</h2>
+      <div className={`w-full ${sizeMap[size]} animate-slide-up flex flex-col max-h-[calc(100vh-4rem)] rounded-2xl bg-white border border-slate-200 shadow-[0_24px_64px_rgba(0,0,0,0.12)] dark:bg-[#0b1e2d] dark:border-cyan-500/15 dark:shadow-[0_0_60px_rgba(6,182,212,0.08),0_24px_64px_rgba(0,0,0,0.6)]`}>
+        <div className="flex items-center justify-between px-6 pt-5 pb-4 flex-shrink-0 border-b border-slate-100 dark:border-white/[0.06]">
+          <h2 className="text-base font-bold font-display text-slate-900 dark:text-slate-100">{title}</h2>
           <button
             onClick={onClose}
             className="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-white/[0.06] transition-colors"

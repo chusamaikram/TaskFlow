@@ -56,7 +56,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 grid-bg bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 light:bg-slate-100">
+    <div className="min-h-screen flex items-center justify-center p-4 grid-bg bg-slate-100 dark:bg-gradient-to-br dark:from-dark-900 dark:via-dark-800 dark:to-dark-900">
       <div className="pointer-events-none fixed top-1/4 right-1/4 w-[400px] h-[400px] opacity-20 rounded-full"
         style={{ background: "radial-gradient(circle, rgba(6,182,212,0.2) 0%, transparent 70%)", filter: "blur(80px)" }} />
       <div className="fixed top-5 right-5"><ThemeToggle /></div>
@@ -67,20 +67,20 @@ export default function Signup() {
             <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-cyan-500 shadow-cyan-lg">
               <Zap size={20} className="text-dark-900" fill="currentColor" />
             </div>
-            <span className="text-2xl font-bold font-display text-slate-100 light:text-slate-900">TaskFlow</span>
+            <span className="text-2xl font-bold font-display text-slate-900 dark:text-slate-100">TaskFlow</span>
           </Link>
-          <h1 className="text-3xl font-bold mb-2 font-display text-slate-100 light:text-slate-900">Create account</h1>
+          <h1 className="text-3xl font-bold mb-2 font-display text-slate-900 dark:text-slate-100">Create account</h1>
           <p className="text-sm text-slate-500">Start organizing your work today</p>
         </div>
 
-        <div className="rounded-2xl p-8 bg-cyan-500/[0.04] border border-cyan-500/15 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] light:bg-white/80 light:border-slate-200">
+        <div className="rounded-2xl p-8 bg-white/80 border border-slate-200 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.08)] dark:bg-cyan-500/[0.04] dark:border-cyan-500/15 dark:shadow-[0_20px_60px_rgba(0,0,0,0.3)]">
           {done ? (
             <div className="text-center py-4 space-y-4">
               <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto bg-emerald-500/12 border border-emerald-500/25">
                 <Mail size={26} className="text-emerald-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold mb-1 font-display text-slate-100 light:text-slate-900">Verify your email</h3>
+                <h3 className="text-lg font-bold mb-1 font-display text-slate-900 dark:text-slate-100">Verify your email</h3>
                 <p className="text-sm text-slate-500">We sent a verification link to</p>
                 <p className="text-sm font-semibold mt-1 text-cyan-500">{form.email}</p>
               </div>
@@ -91,9 +91,9 @@ export default function Signup() {
             <>
               <GoogleButton onClick={handleGoogle} />
               <div className="flex items-center gap-3 my-5">
-                <div className="flex-1 h-px bg-white/[0.06] light:bg-black/[0.08]" />
+                <div className="flex-1 h-px bg-black/[0.08] dark:bg-white/[0.06]" />
                 <span className="text-xs font-mono text-slate-500">or</span>
-                <div className="flex-1 h-px bg-white/[0.06] light:bg-black/[0.08]" />
+                <div className="flex-1 h-px bg-black/[0.08] dark:bg-white/[0.06]" />
               </div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <Input label="Full Name" placeholder="John Doe" value={form.name} onChange={(e) => set("name", e.target.value)} icon={User} required />

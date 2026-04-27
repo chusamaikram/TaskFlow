@@ -11,15 +11,11 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     const root = document.documentElement;
     if (isDark) {
-      root.classList.remove("light");
       root.classList.add("dark");
-      document.body.style.backgroundColor = "#030d12";
-      document.body.style.color = "#f1f5f9";
+      root.classList.remove("light");
     } else {
       root.classList.remove("dark");
-      root.classList.add("light");
-      document.body.style.backgroundColor = "#f1f5f9";
-      document.body.style.color = "#0f172a";
+      root.classList.remove("light");
     }
     localStorage.setItem("taskflow_theme", isDark ? "dark" : "light");
   }, [isDark]);

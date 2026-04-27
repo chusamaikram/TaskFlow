@@ -6,13 +6,13 @@ import ThemeToggle from "../ui/ThemeToggle";
 export default function LandingHeader() {
   const navigate = useNavigate();
   return (
-    <header className="sticky top-0 z-50 w-full bg-dark-900/70 light:bg-slate-100/75 backdrop-blur-xl border-b border-white/[0.06] light:border-black/[0.07] shadow-[0_1px_24px_rgba(0,0,0,0.4)] light:shadow-[0_1px_12px_rgba(0,0,0,0.06)]">
+    <header className="sticky top-0 z-50 w-full bg-slate-100/75 dark:bg-dark-900/70 backdrop-blur-xl border-b border-black/[0.07] dark:border-white/[0.06] shadow-[0_1px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_1px_24px_rgba(0,0,0,0.4)]">
       <nav className="flex items-center justify-between max-w-7xl mx-auto px-4 sm:px-8 h-16">
         <Link to="/" className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-cyan-500 shadow-cyan flex-shrink-0">
             <Zap size={16} className="text-dark-900" fill="currentColor" />
           </div>
-          <span className="text-lg font-bold font-display text-slate-100 light:text-slate-900">TaskFlow</span>
+          <span className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">TaskFlow</span>
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle />

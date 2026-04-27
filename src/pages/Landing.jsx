@@ -26,7 +26,7 @@ export default function Landing() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen grid-bg bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 light:bg-gradient-to-br light:from-sky-50 light:via-blue-50 light:to-sky-50">
+    <div className="min-h-screen grid-bg bg-gradient-to-br from-sky-50 via-blue-50 to-sky-50 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900">
       {/* Ambient glows */}
       <div className="pointer-events-none fixed top-0 left-1/4 w-[600px] h-[600px] opacity-30 rounded-full"
         style={{ background: "radial-gradient(circle, rgba(6,182,212,0.18) 0%, transparent 70%)", filter: "blur(80px)" }} />
@@ -42,12 +42,12 @@ export default function Landing() {
           Now with AI-powered task suggestions
         </div>
 
-        <h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-tight mb-6 font-display text-slate-100 light:text-slate-900 tracking-tight">
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-tight mb-6 font-display text-slate-900 dark:text-slate-100 tracking-tight">
           Work smarter,<br />
           <span className="text-cyan-500" style={{ textShadow: "0 0 40px rgba(6,182,212,0.4)" }}>not harder.</span>
         </h1>
 
-        <p className="text-base sm:text-lg max-w-xl mx-auto mb-10 leading-relaxed text-slate-400 light:text-slate-600">
+        <p className="text-base sm:text-lg max-w-xl mx-auto mb-10 leading-relaxed text-slate-600 dark:text-slate-400">
           TaskFlow is the modern productivity suite for teams and individuals who refuse to settle.
           Organize tasks, track progress, and ship with confidence.
         </p>
@@ -79,10 +79,10 @@ export default function Landing() {
       {/* Features */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 py-16 sm:py-24">
         <div className="text-center mb-12 sm:mb-14">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 font-display text-slate-100 light:text-slate-900">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 font-display text-slate-900 dark:text-slate-100">
             Everything you need.<span className="text-cyan-500"> Nothing you don't.</span>
           </h2>
-          <p className="text-slate-500 light:text-slate-500">Built for focus. Designed for speed.</p>
+          <p className="text-slate-500">Built for focus. Designed for speed.</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {FEATURES.map(({ icon: Icon, title, desc, color }) => (
@@ -90,8 +90,8 @@ export default function Landing() {
               <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: `${color}15`, border: `1px solid ${color}25` }}>
                 <Icon size={22} style={{ color }} />
               </div>
-              <h3 className="font-bold mb-2 font-display text-slate-100 light:text-slate-900">{title}</h3>
-              <p className="text-sm leading-relaxed text-slate-500 light:text-slate-500">{desc}</p>
+              <h3 className="font-bold mb-2 font-display text-slate-900 dark:text-slate-100">{title}</h3>
+              <p className="text-sm leading-relaxed text-slate-500">{desc}</p>
             </div>
           ))}
         </div>
@@ -99,7 +99,7 @@ export default function Landing() {
 
       {/* Testimonials */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 py-12 sm:py-16">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10 sm:mb-12 font-display text-slate-100 light:text-slate-900">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10 sm:mb-12 font-display text-slate-900 dark:text-slate-100">
           Loved by teams worldwide
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -108,9 +108,9 @@ export default function Landing() {
               <div className="flex gap-0.5 mb-3">
                 {Array(t.stars).fill(0).map((_, i) => <Star key={i} size={14} className="text-amber-400 fill-amber-400" />)}
               </div>
-              <p className="text-sm mb-4 italic leading-relaxed text-slate-400 light:text-slate-500">"{t.text}"</p>
+              <p className="text-sm mb-4 italic leading-relaxed text-slate-500 dark:text-slate-400">"{t.text}"</p>
               <div>
-                <p className="text-sm font-semibold font-display text-slate-200 light:text-slate-900">{t.name}</p>
+                <p className="text-sm font-semibold font-display text-slate-900 dark:text-slate-200">{t.name}</p>
                 <p className="text-xs text-slate-500">{t.role}</p>
               </div>
             </div>
@@ -121,8 +121,8 @@ export default function Landing() {
       {/* CTA */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 py-16 sm:py-20 text-center">
         <div className="card py-12 sm:py-16 px-6 sm:px-8 bg-gradient-to-br from-cyan-500/[0.08] to-indigo-500/[0.05] border-cyan-500/20">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 font-display text-slate-100 light:text-slate-900">Ready to get organized?</h2>
-          <p className="text-slate-400 mb-8">Join thousands of teams already using TaskFlow.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 font-display text-slate-900 dark:text-slate-100">Ready to get organized?</h2>
+          <p className="text-slate-500 dark:text-slate-400 mb-8">Join thousands of teams already using TaskFlow.</p>
           <Button size="lg" onClick={() => navigate("/signup")}>Create your free account <ArrowRight size={18} /></Button>
         </div>
       </section>

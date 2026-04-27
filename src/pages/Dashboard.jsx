@@ -74,7 +74,7 @@ export default function Dashboard() {
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
             <p className="text-sm mb-1 font-mono text-slate-500">{greeting},</p>
-            <h1 className="text-2xl sm:text-3xl font-bold font-display text-slate-100 light:text-slate-900">
+            <h1 className="text-2xl sm:text-3xl font-bold font-display text-slate-900 dark:text-slate-100">
               {user?.name?.split(" ")[0]}
             </h1>
             <p className="mt-1 text-sm text-slate-500">
@@ -108,14 +108,14 @@ export default function Dashboard() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 mb-6 p-1 rounded-xl overflow-x-auto bg-white/[0.03] border border-white/[0.05] light:bg-black/[0.03] light:border-black/[0.05]">
+      <div className="flex items-center gap-1 mb-6 p-1 rounded-xl overflow-x-auto bg-black/[0.03] border border-black/[0.05] dark:bg-white/[0.03] dark:border-white/[0.05]">
         {TABS.map(({ key, label, color }) => {
           const isActive = activeTab === key;
           return (
             <button
               key={key}
               onClick={() => setActiveTab(key)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all flex-shrink-0 ${isActive ? `${color} bg-white/[0.06] light:bg-black/[0.04]` : "text-slate-500 hover:text-slate-300"}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all flex-shrink-0 ${isActive ? `${color} bg-black/[0.04] dark:bg-white/[0.06]` : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
             >
               {label}
               <span className={`text-xs px-1.5 py-0.5 rounded-md min-w-[20px] text-center font-mono ${isActive ? "bg-white/10" : "bg-white/[0.05]"}`}>
@@ -127,22 +127,22 @@ export default function Dashboard() {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl overflow-hidden border border-white/[0.05] light:border-black/[0.07]">
+      <div className="rounded-xl overflow-hidden border border-black/[0.07] dark:border-white/[0.05]">
         {tasksLoading ? (
           <>
-            <div className="hidden md:grid px-4 py-3 bg-dark-800 light:bg-slate-50 border-b border-white/[0.05] light:border-slate-200"
+            <div className="hidden md:grid px-4 py-3 bg-slate-50 dark:bg-dark-800 border-b border-slate-200 dark:border-white/[0.05]"
               style={{ gridTemplateColumns: COL_WIDTHS }}>
               {COLUMNS.map((c) => <div key={c} className="h-3 rounded-md bg-white/[0.06] light:bg-slate-200 w-3/5" />)}
             </div>
             {Array(5).fill(0).map((_, i) => (
-              <div key={i} className="hidden md:grid items-center px-4 py-4 border-b border-white/[0.05] light:border-slate-100 last:border-0"
+              <div key={i} className="hidden md:grid items-center px-4 py-4 border-b border-slate-100 dark:border-white/[0.05] last:border-0"
                 style={{ gridTemplateColumns: COL_WIDTHS, opacity: 1 - i * 0.15 }}>
                 <div className="space-y-1.5 pr-4">
-                  <div className="h-3 rounded-md bg-white/[0.07] light:bg-slate-200 w-4/5 animate-pulse" />
-                  <div className="h-2.5 rounded-md bg-white/[0.04] light:bg-slate-100 w-2/5 animate-pulse" />
+                  <div className="h-3 rounded-md bg-slate-200 dark:bg-white/[0.07] w-4/5 animate-pulse" />
+                  <div className="h-2.5 rounded-md bg-slate-100 dark:bg-white/[0.04] w-2/5 animate-pulse" />
                 </div>
                 {["50%","40%","55%","60%","50%","70%"].map((w, j) => (
-                  <div key={j} className="h-3 rounded-md bg-white/[0.05] light:bg-slate-200 animate-pulse" style={{ width: w }} />
+                  <div key={j} className="h-3 rounded-md bg-slate-200 dark:bg-white/[0.05] animate-pulse" style={{ width: w }} />
                 ))}
               </div>
             ))}
@@ -159,7 +159,7 @@ export default function Dashboard() {
         ) : (
           <>
             {/* Desktop table header */}
-            <div className="hidden md:grid text-xs font-semibold uppercase tracking-wider px-4 py-3 font-mono text-slate-500 bg-dark-800 light:bg-slate-50 border-b border-white/[0.05] light:border-slate-200"
+            <div className="hidden md:grid text-xs font-semibold uppercase tracking-wider px-4 py-3 font-mono text-slate-500 bg-slate-50 dark:bg-dark-800 border-b border-slate-200 dark:border-white/[0.05]"
               style={{ gridTemplateColumns: COL_WIDTHS }}>
               {COLUMNS.map((col) => <div key={col}>{col}</div>)}
             </div>
@@ -177,23 +177,23 @@ export default function Dashboard() {
               {filtered.map((task, i) => (
                 <div
                   key={task.id}
-                  className="grid items-center px-4 py-3 cursor-pointer hover:bg-cyan-500/[0.04] transition-colors border-b border-white/[0.05] light:border-slate-100 last:border-0"
+                  className="grid items-center px-4 py-3 cursor-pointer hover:bg-cyan-500/[0.04] transition-colors border-b border-slate-100 dark:border-white/[0.05] last:border-0"
                   style={{ gridTemplateColumns: COL_WIDTHS }}
                   onClick={() => setViewTask(task)}
                 >
                   <div className="pr-4 min-w-0">
-                    <p className={`text-sm font-semibold font-display truncate ${task.status === "done" ? "text-slate-500 line-through" : "text-slate-100 light:text-slate-900"}`}>
+                    <p className={`text-sm font-semibold font-display truncate ${task.status === "done" ? "text-slate-400 line-through" : "text-slate-900 dark:text-slate-100"}`}>
                       {task.title}
                     </p>
                     {task.description && <p className="text-xs truncate mt-0.5 text-slate-500">{task.description}</p>}
                   </div>
                   <div>
-                    <span className="text-xs px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 light:text-indigo-600">{task.category || "—"}</span>
+                    <span className="text-xs px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">{task.category || "—"}</span>
                   </div>
                   <div><Badge type={task.priority} /></div>
                   <div><Badge type={task.status} /></div>
                   <div className="text-xs font-mono text-slate-500">{formatDate(task.createdAt)}</div>
-                  <div className={`text-xs font-mono ${task.dueDate ? "text-slate-300 light:text-slate-700" : "text-slate-500"}`}>{formatDate(task.dueDate)}</div>
+                  <div className={`text-xs font-mono ${task.dueDate ? "text-slate-700 dark:text-slate-300" : "text-slate-400"}`}>{formatDate(task.dueDate)}</div>
                   <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                     <button title="View"   className="p-1.5 rounded-lg text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all"   onClick={() => setViewTask(task)}><Eye size={13} /></button>
                     <button title="Edit"   className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10 transition-all" onClick={() => setEditTask(task)}><Pencil size={13} /></button>
@@ -207,11 +207,11 @@ export default function Dashboard() {
             </div>
 
             {/* Mobile cards */}
-            <div className="md:hidden divide-y divide-white/[0.05] light:divide-slate-100">
+            <div className="md:hidden divide-y divide-slate-100 dark:divide-white/[0.05]">
               {filtered.map((task) => (
                 <div key={task.id} className="p-4 hover:bg-cyan-500/[0.04] transition-colors cursor-pointer" onClick={() => setViewTask(task)}>
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <p className={`text-sm font-semibold font-display flex-1 ${task.status === "done" ? "text-slate-500 line-through" : "text-slate-100 light:text-slate-900"}`}>
+                    <p className={`text-sm font-semibold font-display flex-1 ${task.status === "done" ? "text-slate-400 line-through" : "text-slate-900 dark:text-slate-100"}`}>
                       {task.title}
                     </p>
                     <div className="flex items-center gap-1 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -251,7 +251,7 @@ export default function Dashboard() {
         {viewTask && (
           <div className="space-y-4">
             <div>
-              <h3 className={`text-xl font-bold mb-3 font-display text-slate-100 light:text-slate-900 ${viewTask.status === "done" ? "line-through opacity-50" : ""}`}>
+              <h3 className={`text-xl font-bold mb-3 font-display text-slate-900 dark:text-slate-100 ${viewTask.status === "done" ? "line-through opacity-50" : ""}`}>
                 {viewTask.title}
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -262,7 +262,7 @@ export default function Dashboard() {
             </div>
 
             {viewTask.description && (
-              <p className="text-sm leading-relaxed rounded-xl p-4 bg-white/[0.03] border border-white/[0.06] text-slate-400 light:bg-black/[0.03] light:border-slate-200 light:text-slate-600">
+              <p className="text-sm leading-relaxed rounded-xl p-4 bg-black/[0.03] border border-slate-200 text-slate-600 dark:bg-white/[0.03] dark:border-white/[0.06] dark:text-slate-400">
                 {viewTask.description}
               </p>
             )}
@@ -270,16 +270,16 @@ export default function Dashboard() {
             {viewTask.tags?.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {viewTask.tags.map((tag) => (
-                  <span key={tag} className="text-xs px-2 py-0.5 rounded bg-cyan-500/[0.08] text-cyan-400 light:text-cyan-700 font-mono">#{tag}</span>
+                  <span key={tag} className="text-xs px-2 py-0.5 rounded bg-cyan-500/[0.08] text-cyan-700 dark:text-cyan-400 font-mono">#{tag}</span>
                 ))}
               </div>
             )}
 
             <div className="grid grid-cols-2 gap-3">
               {[{ label: "Due Date", value: formatDate(viewTask.dueDate) }, { label: "Created", value: formatDate(viewTask.createdAt) }].map(({ label, value }) => (
-                <div key={label} className="rounded-xl p-3 bg-white/[0.03] border border-white/[0.06] light:bg-black/[0.03] light:border-slate-200">
+                <div key={label} className="rounded-xl p-3 bg-black/[0.03] border border-slate-200 dark:bg-white/[0.03] dark:border-white/[0.06]">
                   <p className="text-xs mb-1 font-mono uppercase tracking-wider text-slate-500">{label}</p>
-                  <p className="text-sm font-medium text-slate-300 light:text-slate-700">{value}</p>
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{value}</p>
                 </div>
               ))}
             </div>

@@ -7,43 +7,42 @@
 @layer base {
   body {
     font-family: 'DM Sans', sans-serif;
-    @apply bg-dark-900 text-slate-100 transition-colors duration-300;
+    @apply bg-slate-100 text-slate-900 transition-colors duration-300;
   }
-  .light body, body.light {
-    @apply bg-slate-100 text-slate-900;
+  .dark body {
+    @apply bg-dark-900 text-slate-100;
   }
 }
 
 @layer components {
   .input-field {
     @apply w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-200;
-    @apply bg-dark-700 border border-dark-400 text-slate-100 placeholder-slate-500;
+    @apply bg-white border border-slate-200 text-slate-900 placeholder-slate-400;
     font-family: 'DM Sans', sans-serif;
   }
   .input-field:focus {
     @apply border-cyan-500;
-    box-shadow: 0 0 0 3px rgba(6,182,212,0.15);
-  }
-  .light .input-field {
-    @apply bg-white border-slate-200 text-slate-900 placeholder-slate-400;
-  }
-  .light .input-field:focus {
-    @apply border-cyan-500;
     box-shadow: 0 0 0 3px rgba(6,182,212,0.12);
+  }
+  .dark .input-field {
+    @apply bg-dark-700 border-dark-400 text-slate-100 placeholder-slate-500;
+  }
+  .dark .input-field:focus {
+    box-shadow: 0 0 0 3px rgba(6,182,212,0.15);
   }
 
   .card {
     @apply rounded-2xl p-5 transition-all duration-200;
-    @apply bg-cyan-500/[0.04] border border-white/[0.06] shadow-card;
+    @apply bg-white border border-slate-200 shadow-sm;
   }
   .card:hover {
-    @apply shadow-card-hover;
-  }
-  .light .card {
-    @apply bg-white border-slate-200 shadow-sm;
-  }
-  .light .card:hover {
     box-shadow: 0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(6,182,212,0.15);
+  }
+  .dark .card {
+    @apply bg-cyan-500/[0.04] border-white/[0.06] shadow-card;
+  }
+  .dark .card:hover {
+    @apply shadow-card-hover;
   }
 
   .sidebar-item {
@@ -52,36 +51,42 @@
     font-family: 'DM Sans', sans-serif;
   }
   .sidebar-item:hover {
-    @apply text-cyan-400 bg-cyan-500/[0.08];
+    @apply text-cyan-600 bg-cyan-500/[0.08];
   }
   .sidebar-item.active {
+    @apply text-cyan-600 bg-cyan-500/10 border-cyan-500/25;
+  }
+  .dark .sidebar-item:hover {
+    @apply text-cyan-400 bg-cyan-500/[0.08];
+  }
+  .dark .sidebar-item.active {
     @apply text-cyan-400 bg-cyan-500/[0.12] border-cyan-500/20;
   }
-  .light .sidebar-item { @apply text-slate-500; }
-  .light .sidebar-item:hover { @apply text-cyan-600 bg-cyan-500/[0.08]; }
-  .light .sidebar-item.active { @apply text-cyan-600 bg-cyan-500/10 border-cyan-500/25; }
 
   .grid-bg {
     background-image:
-      linear-gradient(rgba(6,182,212,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(6,182,212,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-  .light .grid-bg {
-    background-image:
       linear-gradient(rgba(6,182,212,0.06) 1px, transparent 1px),
       linear-gradient(90deg, rgba(6,182,212,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .dark .grid-bg {
+    background-image:
+      linear-gradient(rgba(6,182,212,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(6,182,212,0.04) 1px, transparent 1px);
   }
 }
 
-/* Scrollbars */
+/* Scrollbars — light */
 ::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { @apply bg-dark-900; }
-::-webkit-scrollbar-thumb { @apply bg-dark-400 rounded; }
-::-webkit-scrollbar-thumb:hover { @apply bg-cyan-700; }
-.light ::-webkit-scrollbar-track { @apply bg-slate-100; }
-.light ::-webkit-scrollbar-thumb { @apply bg-slate-300; }
-.light ::-webkit-scrollbar-thumb:hover { @apply bg-cyan-600; }
+::-webkit-scrollbar-track { @apply bg-slate-100; }
+::-webkit-scrollbar-thumb { @apply bg-slate-300 rounded; }
+::-webkit-scrollbar-thumb:hover { @apply bg-cyan-600; }
+
+/* Scrollbars — dark */
+.dark ::-webkit-scrollbar-track { @apply bg-dark-900; }
+.dark ::-webkit-scrollbar-thumb { @apply bg-dark-400 rounded; }
+.dark ::-webkit-scrollbar-thumb:hover { @apply bg-cyan-700; }
+
 .modal-scroll::-webkit-scrollbar { width: 4px; }
 .modal-scroll::-webkit-scrollbar-track { background: transparent; }
 .modal-scroll::-webkit-scrollbar-thumb { @apply bg-cyan-500/20 rounded; }

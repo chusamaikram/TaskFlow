@@ -9,7 +9,7 @@ export default function DashboardLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 light:bg-slate-100">
+    <div className="flex h-screen overflow-hidden bg-slate-100 dark:bg-gradient-to-br dark:from-dark-900 dark:via-dark-800 dark:to-dark-900">
       <div className="pointer-events-none fixed top-0 left-0 w-96 h-96 opacity-30 rounded-full"
         style={{ background: "radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)", filter: "blur(60px)" }} />
 
@@ -18,7 +18,7 @@ export default function DashboardLayout() {
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
 
         {/* Top header — visible on all screen sizes */}
-        <header className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-white/[0.06] light:border-slate-200 bg-dark-800/80 light:bg-white/80 backdrop-blur-sm flex-shrink-0">
+        <header className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-200 dark:border-white/[0.06] bg-white/80 dark:bg-dark-800/80 backdrop-blur-sm flex-shrink-0">
           {/* Left: hamburger (mobile only) + logo (mobile only) */}
           <div className="flex items-center gap-3">
             <button
@@ -32,7 +32,7 @@ export default function DashboardLayout() {
               <div className="w-6 h-6 rounded-lg flex items-center justify-center bg-cyan-500">
                 <span className="text-dark-900 font-bold text-xs">T</span>
               </div>
-              <span className="text-sm font-bold font-display text-slate-100 light:text-slate-900">TaskFlow</span>
+              <span className="text-sm font-bold font-display text-slate-900 dark:text-slate-100">TaskFlow</span>
             </div>
           </div>
 

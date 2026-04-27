@@ -63,7 +63,7 @@ export default function Profile() {
 
         {/* Page header */}
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold font-display text-slate-100 light:text-slate-900">My Profile</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold font-display text-slate-900 dark:text-slate-100">My Profile</h1>
           <p className="mt-1 text-sm text-slate-500">Manage your personal information</p>
         </div>
 
@@ -71,7 +71,7 @@ export default function Profile() {
         <div className="flex items-center gap-4 card mb-5 lg:hidden">
           <Avatar name={user?.name} size="lg" />
           <div className="flex-1 min-w-0">
-            <h2 className="text-base font-bold font-display text-slate-100 light:text-slate-900 truncate">{user?.name}</h2>
+            <h2 className="text-base font-bold font-display text-slate-900 dark:text-slate-100 truncate">{user?.name}</h2>
             <p className="text-xs text-cyan-500 mb-1">{user?.role || "Team Member"}</p>
             <p className="text-xs text-slate-500 truncate">{user?.email}</p>
           </div>
@@ -85,7 +85,7 @@ export default function Profile() {
         {/* ── Mobile edit form (shown inline when editing) ── */}
         {editing && (
           <div className="card mb-5 lg:hidden space-y-3">
-            <h3 className="text-sm font-semibold font-display text-slate-200">Edit Profile</h3>
+            <h3 className="text-sm font-semibold font-display text-slate-800 dark:text-slate-200">Edit Profile</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Input label="Name"     value={form.name}     onChange={(e) => setForm((f) => ({ ...f, name:     e.target.value }))} />
               <Input label="Role"     value={form.role}     onChange={(e) => setForm((f) => ({ ...f, role:     e.target.value }))} />
@@ -127,7 +127,7 @@ export default function Profile() {
 
               {!editing ? (
                 <>
-                  <h2 className="text-xl font-bold mb-1 font-display text-slate-100 light:text-slate-900">{user?.name}</h2>
+                  <h2 className="text-xl font-bold mb-1 font-display text-slate-900 dark:text-slate-100">{user?.name}</h2>
                   <p className="text-sm font-medium mb-3 text-cyan-500">{user?.role || "Team Member"}</p>
                   {user?.bio && <p className="text-sm leading-relaxed mb-4 text-slate-400">{user.bio}</p>}
                   <div className="space-y-2.5 text-left mb-5">
@@ -169,10 +169,10 @@ export default function Profile() {
             {/* Progress bar */}
             <div className="card">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold text-sm font-display text-slate-200 light:text-slate-800">Overall Progress</h3>
+                <h3 className="font-semibold text-sm font-display text-slate-800 dark:text-slate-200">Overall Progress</h3>
                 <span className="text-sm font-mono text-cyan-500">{stats.rate}%</span>
               </div>
-              <div className="w-full h-1.5 rounded-full bg-white/[0.06] light:bg-slate-200">
+              <div className="w-full h-1.5 rounded-full bg-slate-200 dark:bg-white/[0.06]">
                 <div
                   className="h-1.5 rounded-full transition-all duration-700 bg-gradient-to-r from-cyan-800 to-cyan-500"
                   style={{ width: `${stats.rate}%` }}
@@ -186,20 +186,20 @@ export default function Profile() {
 
             {/* Recent Tasks */}
             <div className="card">
-              <h3 className="font-semibold text-sm mb-4 font-display text-slate-200 light:text-slate-800">Recent Tasks</h3>
+              <h3 className="font-semibold text-sm mb-4 font-display text-slate-800 dark:text-slate-200">Recent Tasks</h3>
               {tasks.length === 0 ? (
                 <p className="text-sm text-center py-6 text-slate-500">No tasks yet.</p>
               ) : (
                 <div className="space-y-2">
                   {tasks.slice(0, 5).map((task) => (
-                    <div key={task.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] light:bg-black/[0.02] light:border-slate-200">
+                    <div key={task.id} className="flex items-center gap-3 p-3 rounded-xl bg-black/[0.02] border border-slate-200 dark:bg-white/[0.03] dark:border-white/[0.06]">
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${task.status === "done" ? "bg-emerald-500/10" : "bg-cyan-500/10"}`}>
                         {task.status === "done"
                           ? <CheckCircle2 size={14} className="text-emerald-400" />
                           : <Clock        size={14} className="text-cyan-500" />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-medium font-display truncate ${task.status === "done" ? "text-slate-500 line-through" : "text-slate-200 light:text-slate-800"}`}>
+                        <p className={`text-sm font-medium font-display truncate ${task.status === "done" ? "text-slate-400 line-through" : "text-slate-800 dark:text-slate-200"}`}>
                           {task.title}
                         </p>
                         <p className="text-xs text-slate-500">{task.category}</p>
@@ -213,7 +213,7 @@ export default function Profile() {
 
             {/* Account Details */}
             <div className="card">
-              <h3 className="font-semibold text-sm mb-4 font-display text-slate-200 light:text-slate-800">Account Details</h3>
+              <h3 className="font-semibold text-sm mb-4 font-display text-slate-800 dark:text-slate-200">Account Details</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 {[
                   { label: "Email",        value: user?.email },
@@ -223,7 +223,7 @@ export default function Profile() {
                 ].map(({ label, value }) => (
                   <div key={label} className="min-w-0">
                     <p className="text-xs mb-0.5 uppercase tracking-wider font-mono text-slate-500">{label}</p>
-                    <p className="font-medium text-slate-200 light:text-slate-800 truncate">{value}</p>
+                    <p className="font-medium text-slate-800 dark:text-slate-200 truncate">{value}</p>
                   </div>
                 ))}
               </div>
