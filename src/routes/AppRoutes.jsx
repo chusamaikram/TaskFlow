@@ -10,9 +10,15 @@ import ForgotPassword from "../pages/ForgotPassword";
 import AppLoader from "../components/ui/AppLoader";
 
 function ProtectedRoute({ children }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>; // or spinner
+  }
+
   return user ? children : <Navigate to="/login" replace />;
 }
+
 
 function GuestRoute({ children }) {
   const { user, loading } = useAuth();
