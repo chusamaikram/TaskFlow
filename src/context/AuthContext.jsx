@@ -4,8 +4,6 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
   GoogleAuthProvider,
   signOut,
   sendEmailVerification,
@@ -74,40 +72,22 @@ export function AuthProvider({ children }) {
 useEffect(() => {
   let isMounted = true;
 
-  const init = async () => {
-    try {
-      // Must resolve BEFORE onAuthStateChanged so loading stays true
-      // until Firebase has fully processed the Google redirect
-      const result = await getRedirectResult(auth);
-      if (result?.user) {
-        await createUserDoc(result.user);
-      }
-    } catch (e) {
-      console.error("Redirect error:", e);
+  const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+    if (!isMounted) return;
+
+    if (firebaseUser) {
+      const profile = await fetchUserProfile(firebaseUser);
+      if (isMounted) setUser(profile);
+    } else {
+      if (isMounted) setUser(null);
     }
 
-    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (!isMounted) return;
-
-      if (firebaseUser) {
-        const profile = await fetchUserProfile(firebaseUser);
-        if (isMounted) setUser(profile);
-      } else {
-        if (isMounted) setUser(null);
-      }
-
-      if (isMounted) setLoading(false);
-    });
-
-    return unsub;
-  };
-
-  let unsub;
-  init().then((fn) => { unsub = fn; });
+    if (isMounted) setLoading(false);
+  });
 
   return () => {
     isMounted = false;
-    unsub?.();
+    unsub();
   };
 }, []);
 
@@ -136,12 +116,8 @@ useEffect(() => {
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    if (window.location.hostname === "localhost") {
-      const cred = await signInWithPopup(auth, provider);
-      await createUserDoc(cred.user);
-    } else {
-      await signInWithRedirect(auth, provider);
-    }
+    const cred = await signInWithPopup(auth, provider);
+    await createUserDoc(cred.user);
   };
 
   const logout = () => signOut(auth);

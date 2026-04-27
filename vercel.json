@@ -1,6 +1,5 @@
 {
   "rewrites": [
-    { "source": "/__/firebase/:path*", "destination": "https://taskflow-c272e.firebaseapp.com/__/firebase/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
