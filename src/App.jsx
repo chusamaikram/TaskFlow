@@ -1,11 +1,12 @@
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider} from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { TaskProvider } from "./context/TaskContext";
 import AppRoutes from "./routes/AppRoutes";
 
 export default function App() {
+  
   return (
     <ThemeProvider>
       <AuthProvider>
