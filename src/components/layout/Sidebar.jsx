@@ -1,168 +1,127 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { LayoutDashboard, User, LogOut, Zap, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, User, LogOut, Zap, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { useTheme } from "../../context/ThemeContext";
 import Avatar from "../ui/Avatar";
 
-const navItems = [
+const NAV = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/profile",   icon: User,            label: "Profile"   },
 ];
 
-export default function Sidebar() {
+// Shared sidebar content used by both desktop and mobile drawer
+function SidebarContent({ collapsed, onCollapse, onClose, isMobile }) {
   const { user, logout } = useAuth();
-  const { isDark } = useTheme();
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/");
-  };
-
-  const w        = collapsed ? "w-[68px]" : "w-64";
-  const bg       = isDark ? "linear-gradient(180deg, #061520 0%, #030d12 100%)" : "#ffffff";
-  const border   = isDark ? "rgba(255,255,255,0.06)" : "#e2e8f0";
-  const labelClr = isDark ? "#e2e8f0" : "#0f172a";
-  const subClr   = isDark ? "#64748b" : "#94a3b8";
-  const divClr   = isDark ? "rgba(255,255,255,0.05)" : "#f1f5f9";
+  const handleLogout = async () => { await logout(); navigate("/"); };
 
   return (
-    <aside
-      className={`${w} h-screen flex flex-col sticky top-0 flex-shrink-0 transition-all duration-200`}
-      style={{ background: bg, borderRight: `1px solid ${border}` }}
-    >
+    <div className="h-full flex flex-col">
       {/* Logo */}
-      <div className={`flex items-center p-4 pb-3 ${collapsed ? "justify-center" : "justify-between"}`}>
+      <div className={`flex items-center p-4 pb-3 ${collapsed && !isMobile ? "justify-center" : "justify-between"}`}>
         <div className="flex items-center gap-3 min-w-0">
-          <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{ background: "#06b6d4", boxShadow: "0 0 16px rgba(6,182,212,0.35)" }}
-          >
-            <Zap size={15} color="#030d12" fill="#030d12" />
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 bg-cyan-500 shadow-cyan">
+            <Zap size={15} className="text-dark-900" fill="currentColor" />
           </div>
-          {!collapsed && (
-            <span
-              className="text-lg font-bold truncate"
-              style={{ fontFamily: "'Syne', sans-serif", color: labelClr }}
-            >
-              TaskFlow
-            </span>
+          {(!collapsed || isMobile) && (
+            <span className="text-lg font-bold font-display text-slate-100 light:text-slate-900 truncate">TaskFlow</span>
           )}
         </div>
-
-        {/* Collapse button — only shown inline when expanded */}
-        {!collapsed && (
-          <button
-            onClick={() => setCollapsed(true)}
-            className="p-1.5 rounded-lg transition-all flex-shrink-0"
-            style={{ color: subClr }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = "#06b6d4"; e.currentTarget.style.background = "rgba(6,182,212,0.08)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = subClr; e.currentTarget.style.background = "transparent"; }}
-            title="Collapse sidebar"
-          >
+        {/* Mobile close button */}
+        {isMobile && (
+          <button onClick={onClose} className="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-white/[0.06] transition-all">
+            <X size={18} />
+          </button>
+        )}
+        {/* Desktop collapse button */}
+        {!isMobile && !collapsed && (
+          <button onClick={() => onCollapse(true)} className="p-1.5 rounded-lg text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/[0.08] transition-all">
             <ChevronLeft size={16} />
           </button>
         )}
       </div>
 
-      {/* Expand button — shown as its own row when collapsed */}
-      {collapsed && (
+      {/* Desktop expand button when collapsed */}
+      {!isMobile && collapsed && (
         <div className="flex justify-center px-3 pb-3">
-          <button
-            onClick={() => setCollapsed(false)}
-            className="w-full flex items-center justify-center p-1.5 rounded-lg transition-all"
-            style={{ color: subClr }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = "#06b6d4"; e.currentTarget.style.background = "rgba(6,182,212,0.08)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = subClr; e.currentTarget.style.background = "transparent"; }}
-            title="Expand sidebar"
-          >
+          <button onClick={() => onCollapse(false)} className="w-full flex items-center justify-center p-1.5 rounded-lg text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/[0.08] transition-all">
             <ChevronRight size={16} />
           </button>
         </div>
       )}
 
-      {/* Divider */}
-      <div style={{ height: "1px", background: divClr, margin: "0 1rem" }} />
+      <div className="h-px bg-white/[0.05] mx-4 light:bg-slate-100" />
 
       {/* Nav */}
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto overflow-x-hidden">
-        {!collapsed && (
-          <p
-            className="text-xs uppercase tracking-widest mb-3 px-2 font-mono"
-            style={{ color: subClr }}
-          >
-            Menu
-          </p>
+        {(!collapsed || isMobile) && (
+          <p className="text-xs uppercase tracking-widest mb-3 px-2 font-mono text-slate-600">Menu</p>
         )}
-        {navItems.map(({ to, icon: Icon, label }) => (
+        {NAV.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
-            title={collapsed ? label : undefined}
-            className={({ isActive }) => `sidebar-item ${isActive ? "active" : ""} ${collapsed ? "justify-center px-0" : ""}`}
+            title={collapsed && !isMobile ? label : undefined}
+            onClick={isMobile ? onClose : undefined}
+            className={({ isActive }) =>
+              `sidebar-item ${isActive ? "active" : ""} ${collapsed && !isMobile ? "justify-center px-0" : ""}`
+            }
           >
             <Icon size={18} className="flex-shrink-0" />
-            {!collapsed && <span>{label}</span>}
+            {(!collapsed || isMobile) && <span>{label}</span>}
           </NavLink>
         ))}
       </nav>
 
-      {/* Bottom */}
+      {/* Bottom user card */}
       <div className="p-3 space-y-2">
-        {/* User card */}
-        <div
-          className={`flex items-center rounded-xl p-2.5 ${collapsed ? "justify-center" : "gap-3"}`}
-          style={{ background: "rgba(6,182,212,0.05)", border: "1px solid rgba(6,182,212,0.1)" }}
-        >
+        <div className={`flex items-center rounded-xl p-2.5 bg-cyan-500/[0.05] border border-cyan-500/10 ${collapsed && !isMobile ? "justify-center" : "gap-3"}`}>
           <Avatar name={user?.name} size="sm" />
-          {!collapsed && (
+          {(!collapsed || isMobile) && (
             <>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate" style={{ fontFamily: "'Syne', sans-serif", color: labelClr }}>
-                  {user?.name}
-                </p>
-                <p className="text-xs truncate" style={{ color: subClr }}>{user?.role || "Team Member"}</p>
+                <p className="text-sm font-semibold font-display text-slate-100 light:text-slate-900 truncate">{user?.name}</p>
+                <p className="text-xs text-slate-500 truncate">{user?.role || "Team Member"}</p>
               </div>
-              <button
-                onClick={handleLogout}
-                className="p-1.5 rounded-lg transition-colors flex-shrink-0"
-                style={{ color: subClr }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = "#f87171"; e.currentTarget.style.background = "rgba(239,68,68,0.08)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = subClr;    e.currentTarget.style.background = "transparent"; }}
-                title="Logout"
-              >
+              <button onClick={handleLogout} className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/[0.08] transition-colors flex-shrink-0" title="Logout">
                 <LogOut size={14} />
               </button>
             </>
           )}
-          {collapsed && (
-            <button
-              onClick={handleLogout}
-              className="p-1 rounded-lg transition-colors absolute"
-              style={{ color: subClr, display: "none" }}
-              title="Logout"
-            >
-              <LogOut size={14} />
-            </button>
-          )}
         </div>
 
-        {/* Logout button when collapsed */}
-        {collapsed && (
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center p-2.5 rounded-xl transition-all"
-            style={{ color: subClr, border: "1px solid transparent" }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = "#f87171"; e.currentTarget.style.background = "rgba(239,68,68,0.08)"; e.currentTarget.style.borderColor = "rgba(239,68,68,0.15)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = subClr;    e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "transparent"; }}
-            title="Logout"
-          >
+        {collapsed && !isMobile && (
+          <button onClick={handleLogout} className="w-full flex items-center justify-center p-2.5 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/[0.08] border border-transparent hover:border-rose-500/15 transition-all" title="Logout">
             <LogOut size={16} />
           </button>
         )}
       </div>
-    </aside>
+    </div>
+  );
+}
+
+export default function Sidebar({ mobileOpen, onMobileClose }) {
+  const [collapsed, setCollapsed] = useState(false);
+
+  return (
+    <>
+      {/* Mobile overlay backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-dark-900/70 backdrop-blur-sm md:hidden"
+          onClick={onMobileClose}
+        />
+      )}
+
+      {/* Mobile drawer */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-72 flex flex-col bg-gradient-to-b from-dark-800 to-dark-900 border-r border-white/[0.06] light:bg-white light:border-slate-200 transition-transform duration-300 md:hidden ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        <SidebarContent collapsed={false} onCollapse={setCollapsed} onClose={onMobileClose} isMobile />
+      </aside>
+
+      {/* Desktop sidebar */}
+      <aside className={`hidden md:flex flex-col ${collapsed ? "w-[68px]" : "w-64"} h-screen sticky top-0 flex-shrink-0 transition-all duration-200 bg-gradient-to-b from-dark-800 to-dark-900 border-r border-white/[0.06] light:bg-white light:border-slate-200`}>
+        <SidebarContent collapsed={collapsed} onCollapse={setCollapsed} onClose={onMobileClose} isMobile={false} />
+      </aside>
+    </>
   );
 }

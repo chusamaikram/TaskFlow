@@ -7,105 +7,60 @@
 @layer base {
   body {
     font-family: 'DM Sans', sans-serif;
-    background-color: #030d12;
-    color: #f1f5f9;
-    transition: background-color 0.25s ease, color 0.25s ease;
+    @apply bg-dark-900 text-slate-100 transition-colors duration-300;
   }
   .light body, body.light {
-    background-color: #f1f5f9;
-    color: #0f172a;
+    @apply bg-slate-100 text-slate-900;
   }
 }
 
 @layer components {
-
-  /* ── Input ── */
   .input-field {
-    width: 100%;
-    background: #0a1f2e;
-    border: 1px solid #1a3f58;
-    border-radius: 0.75rem;
-    padding: 0.75rem 1rem;
-    color: #f1f5f9;
+    @apply w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-200;
+    @apply bg-dark-700 border border-dark-400 text-slate-100 placeholder-slate-500;
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.875rem;
-    transition: all 0.2s;
-    outline: none;
   }
-  .input-field::placeholder { color: #475569; }
   .input-field:focus {
-    border-color: #06b6d4;
+    @apply border-cyan-500;
     box-shadow: 0 0 0 3px rgba(6,182,212,0.15);
   }
   .light .input-field {
-    background: #ffffff;
-    border-color: #e2e8f0;
-    color: #0f172a;
+    @apply bg-white border-slate-200 text-slate-900 placeholder-slate-400;
   }
-  .light .input-field::placeholder { color: #94a3b8; }
   .light .input-field:focus {
-    border-color: #06b6d4;
+    @apply border-cyan-500;
     box-shadow: 0 0 0 3px rgba(6,182,212,0.12);
   }
 
-  /* ── Card ── */
   .card {
-    background: rgba(6,182,212,0.04);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 1rem;
-    padding: 1.25rem;
-    transition: box-shadow 0.2s ease, transform 0.15s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    @apply rounded-2xl p-5 transition-all duration-200;
+    @apply bg-cyan-500/[0.04] border border-white/[0.06] shadow-card;
   }
   .card:hover {
-    box-shadow: 0 6px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(6,182,212,0.12);
+    @apply shadow-card-hover;
   }
   .light .card {
-    background: #ffffff;
-    border-color: #e2e8f0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    @apply bg-white border-slate-200 shadow-sm;
   }
   .light .card:hover {
     box-shadow: 0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(6,182,212,0.15);
   }
 
-  /* ── Sidebar nav item ── */
   .sidebar-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.65rem 1rem;
-    border-radius: 0.75rem;
-    color: #64748b;
-    cursor: pointer;
-    transition: all 0.15s;
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium no-underline transition-all duration-150;
+    @apply text-slate-500 border border-transparent cursor-pointer;
     font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 0.875rem;
-    text-decoration: none;
-    border: 1px solid transparent;
   }
   .sidebar-item:hover {
-    color: #22d3ee;
-    background: rgba(6,182,212,0.08);
+    @apply text-cyan-400 bg-cyan-500/[0.08];
   }
   .sidebar-item.active {
-    color: #22d3ee;
-    background: rgba(6,182,212,0.12);
-    border-color: rgba(6,182,212,0.2);
+    @apply text-cyan-400 bg-cyan-500/[0.12] border-cyan-500/20;
   }
-  .light .sidebar-item { color: #64748b; }
-  .light .sidebar-item:hover {
-    color: #0891b2;
-    background: rgba(6,182,212,0.08);
-  }
-  .light .sidebar-item.active {
-    color: #0891b2;
-    background: rgba(6,182,212,0.1);
-    border-color: rgba(6,182,212,0.25);
-  }
+  .light .sidebar-item { @apply text-slate-500; }
+  .light .sidebar-item:hover { @apply text-cyan-600 bg-cyan-500/[0.08]; }
+  .light .sidebar-item.active { @apply text-cyan-600 bg-cyan-500/10 border-cyan-500/25; }
 
-  /* ── Grid background ── */
   .grid-bg {
     background-image:
       linear-gradient(rgba(6,182,212,0.04) 1px, transparent 1px),
@@ -119,19 +74,15 @@
   }
 }
 
-/* ── Scrollbars dark ── */
+/* Scrollbars */
 ::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: #030d12; }
-::-webkit-scrollbar-thumb { background: #1a3f58; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #0891b2; }
-
-/* ── Scrollbars light ── */
-.light ::-webkit-scrollbar-track { background: #f1f5f9; }
-.light ::-webkit-scrollbar-thumb { background: #cbd5e1; }
-.light ::-webkit-scrollbar-thumb:hover { background: #0891b2; }
-
-/* ── Modal scroll ── */
+::-webkit-scrollbar-track { @apply bg-dark-900; }
+::-webkit-scrollbar-thumb { @apply bg-dark-400 rounded; }
+::-webkit-scrollbar-thumb:hover { @apply bg-cyan-700; }
+.light ::-webkit-scrollbar-track { @apply bg-slate-100; }
+.light ::-webkit-scrollbar-thumb { @apply bg-slate-300; }
+.light ::-webkit-scrollbar-thumb:hover { @apply bg-cyan-600; }
 .modal-scroll::-webkit-scrollbar { width: 4px; }
 .modal-scroll::-webkit-scrollbar-track { background: transparent; }
-.modal-scroll::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.2); border-radius: 4px; }
-.modal-scroll::-webkit-scrollbar-thumb:hover { background: rgba(6,182,212,0.45); }
+.modal-scroll::-webkit-scrollbar-thumb { @apply bg-cyan-500/20 rounded; }
+.modal-scroll::-webkit-scrollbar-thumb:hover { @apply bg-cyan-500/40; }

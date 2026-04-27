@@ -3,113 +3,69 @@ import Button from "./Button";
 import Input from "./Input";
 
 const CATEGORIES = ["Design", "Engineering", "Product", "Management", "Marketing", "Other"];
-const PRIORITIES = ["high", "medium", "low"];
-const STATUSES = [
-  { value: "todo", label: "To Do" },
-  { value: "inprogress", label: "In Progress" },
-  { value: "done", label: "Done" },
-];
+const PRIORITIES  = ["high", "medium", "low"];
+const STATUSES    = [{ value: "todo", label: "To Do" }, { value: "inprogress", label: "In Progress" }, { value: "done", label: "Done" }];
+
+function ToggleBtn({ active, onClick, children }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all duration-150 ${
+        active
+          ? "border-cyan-500 bg-cyan-500/15 text-cyan-400"
+          : "border-cyan-500/15 bg-cyan-500/[0.04] text-slate-400 hover:border-cyan-500/30 hover:text-slate-300"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
 
 export default function TaskForm({ initial = {}, onSubmit, onCancel }) {
   const [form, setForm] = useState({
-    title: initial.title || "",
+    title:       initial.title       || "",
     description: initial.description || "",
-    status: initial.status || "todo",
-    priority: initial.priority || "medium",
-    category: initial.category || "Engineering",
-    dueDate: initial.dueDate || "",
-    tags: initial.tags?.join(", ") || "",
+    status:      initial.status      || "todo",
+    priority:    initial.priority    || "medium",
+    category:    initial.category    || "Engineering",
+    dueDate:     initial.dueDate     || "",
+    tags:        initial.tags?.join(", ") || "",
   });
   const [errors, setErrors] = useState({});
-
   const set = (key, value) => setForm((f) => ({ ...f, [key]: value }));
 
-  const validate = () => {
-    const e = {};
-    if (!form.title.trim()) e.title = "Title is required";
-    return e;
-  };
-
   const handleSubmit = () => {
-    const e = validate();
-    if (Object.keys(e).length) { setErrors(e); return; }
-    onSubmit({
-      ...form,
-      tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
-    });
+    if (!form.title.trim()) { setErrors({ title: "Title is required" }); return; }
+    onSubmit({ ...form, tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean) });
   };
-
-  const selectStyle = (value, active) => ({
-    padding: "0.4rem 0.85rem",
-    borderRadius: "0.5rem",
-    border: "1px solid",
-    borderColor: value === active ? "#06b6d4" : "rgba(6,182,212,0.15)",
-    background: value === active ? "rgba(6,182,212,0.15)" : "rgba(6,182,212,0.04)",
-    color: value === active ? "#22d3ee" : "#94a3b8",
-    cursor: "pointer",
-    fontSize: "0.75rem",
-    fontFamily: "'DM Sans', sans-serif",
-    fontWeight: 500,
-    transition: "all 0.15s",
-  });
 
   return (
-    <div className="space-y-4 ">
-      <Input
-        label="Task Title"
-        placeholder="What needs to be done?"
-        value={form.title}
-        onChange={(e) => set("title", e.target.value)}
-        error={errors.title}
-      />
+    <div className="space-y-4">
+      <Input label="Task Title" placeholder="What needs to be done?" value={form.title} onChange={(e) => set("title", e.target.value)} error={errors.title} />
 
       <div>
-        <label className="block text-sm font-medium text-slate-400 mb-1.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-          Description
-        </label>
-        <textarea
-          className="input-field resize-none"
-          rows={3}
-          placeholder="Add more context..."
-          value={form.description}
-          onChange={(e) => set("description", e.target.value)}
-          style={{ resize: "none" }}
-        />
+        <label className="block text-sm font-medium text-slate-400 mb-1.5">Description</label>
+        <textarea className="input-field resize-none" rows={3} placeholder="Add more context..." value={form.description} onChange={(e) => set("description", e.target.value)} />
       </div>
 
-      {/* Status */}
       <div>
-        <label className="block text-sm font-medium text-slate-400 mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>Status</label>
+        <label className="block text-sm font-medium text-slate-400 mb-2">Status</label>
         <div className="flex gap-2 flex-wrap">
-          {STATUSES.map((s) => (
-            <button key={s.value} type="button" style={selectStyle(s.value, form.status)} onClick={() => set("status", s.value)}>
-              {s.label}
-            </button>
-          ))}
+          {STATUSES.map((s) => <ToggleBtn key={s.value} active={form.status === s.value} onClick={() => set("status", s.value)}>{s.label}</ToggleBtn>)}
         </div>
       </div>
 
-      {/* Priority */}
       <div>
-        <label className="block text-sm font-medium text-slate-400 mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>Priority</label>
+        <label className="block text-sm font-medium text-slate-400 mb-2">Priority</label>
         <div className="flex gap-2">
-          {PRIORITIES.map((p) => (
-            <button key={p} type="button" style={selectStyle(p, form.priority)} onClick={() => set("priority", p)}>
-              {p.charAt(0).toUpperCase() + p.slice(1)}
-            </button>
-          ))}
+          {PRIORITIES.map((p) => <ToggleBtn key={p} active={form.priority === p} onClick={() => set("priority", p)}>{p.charAt(0).toUpperCase() + p.slice(1)}</ToggleBtn>)}
         </div>
       </div>
 
-      {/* Category */}
       <div>
-        <label className="block text-sm font-medium text-slate-400 mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>Category</label>
-        <select
-          className="input-field"
-          value={form.category}
-          onChange={(e) => set("category", e.target.value)}
-          style={{ background: "#0a1f2e", cursor: "pointer" }}
-        >
+        <label className="block text-sm font-medium text-slate-400 mb-2">Category</label>
+        <select className="input-field cursor-pointer" value={form.category} onChange={(e) => set("category", e.target.value)}>
           {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
         </select>
       </div>
@@ -119,12 +75,9 @@ export default function TaskForm({ initial = {}, onSubmit, onCancel }) {
         <Input label="Tags (comma separated)" placeholder="UI, Frontend" value={form.tags} onChange={(e) => set("tags", e.target.value)} />
       </div>
 
-      {/* Actions */}
       <div className="flex gap-3 pt-2">
         <Button variant="outline" onClick={onCancel} className="flex-1">Cancel</Button>
-        <Button onClick={handleSubmit} className="flex-1">
-          {initial.id ? "Update Task" : "Create Task"}
-        </Button>
+        <Button onClick={handleSubmit} className="flex-1">{initial.id ? "Update Task" : "Create Task"}</Button>
       </div>
     </div>
   );

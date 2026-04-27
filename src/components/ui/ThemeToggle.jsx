@@ -6,21 +6,12 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className="relative flex items-center w-14 h-7 rounded-full transition-all duration-300 focus:outline-none"
-      style={{
-        background: isDark ? "rgba(6,182,212,0.2)" : "rgba(6,182,212,0.3)",
-        border: "1px solid rgba(6,182,212,0.3)",
-      }}
+      className="relative flex items-center w-14 h-7 rounded-full transition-all duration-300 focus:outline-none bg-cyan-500/20 border border-cyan-500/30"
     >
       <span
-        className="absolute flex items-center justify-center w-5 h-5 rounded-full transition-all duration-300"
-        style={{
-          left: isDark ? "2px" : "calc(100% - 22px)",
-          background: "#06b6d4",
-          boxShadow: "0 0 10px rgba(6,182,212,0.5)",
-        }}
+        className={`absolute flex items-center justify-center w-5 h-5 rounded-full bg-cyan-500 shadow-cyan transition-all duration-300 ${isDark ? "left-0.5" : "left-[calc(100%-22px)]"}`}
       >
-        {isDark ? <Moon size={11} color="#030d12" /> : <Sun size={11} color="#030d12" />}
+        {isDark ? <Moon size={11} className="text-dark-900" /> : <Sun size={11} className="text-dark-900" />}
       </span>
     </button>
   );

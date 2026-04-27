@@ -1,56 +1,22 @@
 import { useNavigate, Link } from "react-router-dom";
 import { Zap } from "lucide-react";
-import { useTheme } from "../../context/ThemeContext";
 import Button from "../ui/Button";
 import ThemeToggle from "../ui/ThemeToggle";
 
 export default function LandingHeader() {
   const navigate = useNavigate();
-  const { isDark } = useTheme();
-
   return (
-    <header
-      className="sticky top-0 z-50 w-full"
-      style={{
-        background: isDark
-          ? "rgba(3,13,18,0.7)"
-          : "rgba(241,245,249,0.75)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        borderBottom: isDark
-          ? "1px solid rgba(255,255,255,0.06)"
-          : "1px solid rgba(0,0,0,0.07)",
-        boxShadow: isDark
-          ? "0 1px 24px rgba(0,0,0,0.4)"
-          : "0 1px 12px rgba(0,0,0,0.06)",
-      }}
-    >
-      <nav className="flex items-center justify-between max-w-7xl mx-auto px-8 h-16">
-        {/* Logo */}
+    <header className="sticky top-0 z-50 w-full bg-dark-900/70 light:bg-slate-100/75 backdrop-blur-xl border-b border-white/[0.06] light:border-black/[0.07] shadow-[0_1px_24px_rgba(0,0,0,0.4)] light:shadow-[0_1px_12px_rgba(0,0,0,0.06)]">
+      <nav className="flex items-center justify-between max-w-7xl mx-auto px-4 sm:px-8 h-16">
         <Link to="/" className="flex items-center gap-3">
-          <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{ background: "#06b6d4", boxShadow: "0 0 16px rgba(6,182,212,0.4)" }}
-          >
-            <Zap size={16} color="#030d12" fill="#030d12" />
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-cyan-500 shadow-cyan flex-shrink-0">
+            <Zap size={16} className="text-dark-900" fill="currentColor" />
           </div>
-          <span
-            className="text-lg font-bold"
-            style={{ fontFamily: "'Syne', sans-serif", color: isDark ? "#f1f5f9" : "#0f172a" }}
-          >
-            TaskFlow
-          </span>
+          <span className="text-lg font-bold font-display text-slate-100 light:text-slate-900">TaskFlow</span>
         </Link>
-
-        {/* Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
-          <Button variant="ghost" size="sm" onClick={() => navigate("/login")}>
-            Sign In
-          </Button>
-          <Button size="sm" onClick={() => navigate("/signup")}>
-            Get Started
-          </Button>
+          <Button size="sm" onClick={() => navigate("/signup")}>Get Started</Button>
         </div>
       </nav>
     </header>
