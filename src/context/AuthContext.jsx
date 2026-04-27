@@ -70,50 +70,109 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+// useEffect(() => {
+//   let isMounted = true;
+
+//   const initAuth = async () => {
+//     try {
+//       // Handles Google redirect login result (VERY IMPORTANT for Vercel)
+//       const result = await getRedirectResult(auth);
+
+//       if (result?.user) {
+//         await createUserDoc(result.user);
+//       }
+//     } catch (err) {
+//       console.error("Redirect auth error:", err);
+//     }
+//   };
+
+//   initAuth();
+
+//   const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+//     try {
+//       if (!isMounted) return;
+
+//       if (firebaseUser) {
+//         const profile = await fetchUserProfile(firebaseUser);
+
+//         if (isMounted) {
+//           setUser(profile);
+//         }
+//       } else {
+//         if (isMounted) {
+//           setUser(null);
+//         }
+//       }
+//     } catch (err) {
+//       console.error("Auth state error:", err);
+//       if (isMounted) setUser(null);
+//     } finally {
+//       if (isMounted) {
+//         setLoading(false);
+//       }
+//     }
+//   });
+
+//   return () => {
+//     isMounted = false;
+//     unsub();
+//   };
+// }, []);
+
 useEffect(() => {
+  console.log("🔥 AUTH INIT: useEffect mounted");
+
   let isMounted = true;
 
   const initAuth = async () => {
+    console.log("➡️ getRedirectResult START");
+
     try {
-      // Handles Google redirect login result (VERY IMPORTANT for Vercel)
       const result = await getRedirectResult(auth);
 
+      console.log("⬅️ getRedirectResult RESULT:", result?.user?.email || null);
+
       if (result?.user) {
+        console.log("🟢 Creating Firestore user from redirect");
         await createUserDoc(result.user);
       }
     } catch (err) {
-      console.error("Redirect auth error:", err);
+      console.log("❌ getRedirectResult ERROR:", err);
     }
   };
 
   initAuth();
 
   const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+    console.log("⚡ onAuthStateChanged TRIGGERED");
+
+    console.log("👤 Firebase User:", firebaseUser?.email || null);
+
     try {
       if (!isMounted) return;
 
       if (firebaseUser) {
+        console.log("📦 Fetching Firestore profile...");
         const profile = await fetchUserProfile(firebaseUser);
 
-        if (isMounted) {
-          setUser(profile);
-        }
+        console.log("✅ Profile loaded:", profile.email);
+
+        setUser(profile);
       } else {
-        if (isMounted) {
-          setUser(null);
-        }
+        console.log("🚪 No user found → setting null");
+        setUser(null);
       }
     } catch (err) {
-      console.error("Auth state error:", err);
-      if (isMounted) setUser(null);
+      console.log("❌ Auth error:", err);
+      setUser(null);
     } finally {
-      if (isMounted) {
-        setLoading(false);
-      }
+      console.log("🏁 Setting loading = false");
+      setLoading(false);
     }
   });
 
   return () => {
+    console.log("🧹 Auth listener cleanup");
     isMounted = false;
     unsub();
   };
