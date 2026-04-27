@@ -4,6 +4,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   signOut,
   sendEmailVerification,
@@ -72,22 +74,36 @@ export function AuthProvider({ children }) {
 useEffect(() => {
   let isMounted = true;
 
-  const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
-    if (!isMounted) return;
-
-    if (firebaseUser) {
-      const profile = await fetchUserProfile(firebaseUser);
-      if (isMounted) setUser(profile);
-    } else {
-      if (isMounted) setUser(null);
+  const init = async () => {
+    try {
+      const result = await getRedirectResult(auth);
+      if (result?.user) {
+        await createUserDoc(result.user);
+      }
+    } catch (e) {
+      console.error("Redirect error:", e);
     }
 
-    if (isMounted) setLoading(false);
-  });
+    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!isMounted) return;
+      if (firebaseUser) {
+        const profile = await fetchUserProfile(firebaseUser);
+        if (isMounted) setUser(profile);
+      } else {
+        if (isMounted) setUser(null);
+      }
+      if (isMounted) setLoading(false);
+    });
+
+    return unsub;
+  };
+
+  let unsub;
+  init().then((fn) => { unsub = fn; });
 
   return () => {
     isMounted = false;
-    unsub();
+    unsub?.();
   };
 }, []);
 
@@ -116,8 +132,16 @@ useEffect(() => {
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    const cred = await signInWithPopup(auth, provider);
-    await createUserDoc(cred.user);
+    try {
+      const cred = await signInWithPopup(auth, provider);
+      await createUserDoc(cred.user);
+    } catch (err) {
+      if (err.code === "auth/popup-blocked") {
+        await signInWithRedirect(auth, provider);
+      } else {
+        throw err;
+      }
+    }
   };
 
   const logout = () => signOut(auth);

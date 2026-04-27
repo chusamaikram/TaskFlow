@@ -48,16 +48,12 @@ export default function Signup() {
   const handleGoogle = async () => {
     try {
       await loginWithGoogle();
-      if (window.location.hostname === "localhost") {
-        toast.success("Signed up with Google!");
-        navigate("/dashboard");
-      }
+      toast.success("Signed up with Google!");
+      navigate("/dashboard");
     } catch (err) {
-      console.error("Google error:", err.code, err.message);
+      if (err.code === "auth/popup-closed-by-user") return;
       const msg =
-        err.code === "auth/popup-blocked"        ? "Popup was blocked. Please allow popups for this site." :
-        err.code === "auth/popup-closed-by-user" ? "Sign in cancelled." :
-        err.code === "auth/unauthorized-domain"  ? "This domain is not authorized. Contact support." :
+        err.code === "auth/unauthorized-domain" ? "This domain is not authorized. Contact support." :
         "Google sign in failed. Please try again.";
       toast.error(msg);
     }
