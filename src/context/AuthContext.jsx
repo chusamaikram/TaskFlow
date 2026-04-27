@@ -70,26 +70,54 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // On production, after Google redirect, getRedirectResult fires before onAuthStateChanged
-    // createUserDoc here ensures the Firestore doc exists before the auth state listener picks up the user
-    getRedirectResult(auth)
-      .then(async (result) => {
-        if (result?.user) await createUserDoc(result.user);
-      })
-      .catch(() => {});
+useEffect(() => {
+  let isMounted = true;
 
-    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+  const initAuth = async () => {
+    try {
+      // Handles Google redirect login result (VERY IMPORTANT for Vercel)
+      const result = await getRedirectResult(auth);
+
+      if (result?.user) {
+        await createUserDoc(result.user);
+      }
+    } catch (err) {
+      console.error("Redirect auth error:", err);
+    }
+  };
+
+  initAuth();
+
+  const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+    try {
+      if (!isMounted) return;
+
       if (firebaseUser) {
         const profile = await fetchUserProfile(firebaseUser);
-        setUser(profile);
+
+        if (isMounted) {
+          setUser(profile);
+        }
       } else {
-        setUser(null);
+        if (isMounted) {
+          setUser(null);
+        }
       }
-      setLoading(false);
-    });
-    return unsub;
-  }, []);
+    } catch (err) {
+      console.error("Auth state error:", err);
+      if (isMounted) setUser(null);
+    } finally {
+      if (isMounted) {
+        setLoading(false);
+      }
+    }
+  });
+
+  return () => {
+    isMounted = false;
+    unsub();
+  };
+}, []);
 
   const login = async (email, password) => {
     const cred = await signInWithEmailAndPassword(auth, email, password);

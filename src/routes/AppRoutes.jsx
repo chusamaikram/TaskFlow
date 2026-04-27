@@ -14,14 +14,20 @@ import AppLoader from "../components/ui/AppLoader";
 
 // Protect authenticated pages
 function ProtectedRoute({ children }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) return null; // or loader
+
   return user ? children : <Navigate to="/login" replace />;
 }
 
 
 // Prevent logged-in users from accessing login/signup
 function GuestRoute({ children }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) return null;
+
   return !user ? children : <Navigate to="/dashboard" replace />;
 }
 
