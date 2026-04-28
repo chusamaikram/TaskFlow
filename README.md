@@ -1,6 +1,6 @@
 # ⚡ TaskFlow
 
-A modern, full-stack task management application built with React and Firebase. TaskFlow helps individuals and teams organize work, track progress, and stay productive with a clean, professional interface that supports both dark and light modes.
+A modern, full-stack task management application built with React, Firebase, and Gemini AI. TaskFlow helps individuals and teams organize work, track progress, and stay productive with a clean, professional interface — powered by an AI assistant that understands your tasks, suggests due dates, generates daily briefings, and creates tasks from natural language. Supports both dark and light modes.
 
 ---
 
@@ -49,6 +49,19 @@ A modern, full-stack task management application built with React and Firebase. 
 - Recent tasks list
 - Account details section
 
+### AI Assistant (Gemini 2.5 Flash)
+- Floating AI button on desktop for instant access
+- Persistent chat sessions stored in Firestore per user
+- Streaming responses with real-time token-by-token rendering
+- Full markdown rendering — bold, italic, code, headings, lists, code blocks
+- Context-aware — the AI knows your current tasks, priorities, and due dates
+- Create tasks from natural language — AI responds with a structured JSON block and a one-click "Add all to TaskFlow" action
+- AI due date suggestions — click "AI suggest" in the task form to get a smart date based on priority and workload
+- Daily briefing card on the dashboard — overdue count, due today, and in-progress summary
+- Weekly productivity report — generated on demand from the chat header
+- Explain any task — hit the ✦ sparkle icon on a task row to open the AI with a pre-filled explanation prompt
+- Multi-session chat history with rename and delete support
+
 ### UI / UX
 - Dark mode and light mode with smooth transition
 - Theme preference persisted to localStorage
@@ -66,11 +79,12 @@ A modern, full-stack task management application built with React and Firebase. 
 | Layer | Technology |
 |---|---|
 | Framework | React 19 |
-| Build tool | Vite |
+| Build tool | Vite 8 |
 | Styling | Tailwind CSS v3 |
 | Routing | React Router v7 |
 | Auth | Firebase Authentication |
 | Database | Cloud Firestore |
+| AI | Google Gemini 2.5 Flash (`@google/generative-ai`) |
 | Icons | Lucide React |
 | Notifications | React Hot Toast |
 | Deployment | Vercel |
@@ -95,11 +109,12 @@ src/
 │       ├── GoogleButton.jsx      # Styled Google OAuth button
 │       ├── Input.jsx             # Form input with icon support
 │       ├── Modal.jsx             # Accessible modal with scroll
+│       ├── AIAssistant.jsx       # AI chat panel with streaming + markdown
 │       ├── StatsCard.jsx         # Dashboard metric card
-│       ├── TaskCard.jsx          # Kanban-style task card
-│       ├── TaskForm.jsx          # Create / edit task form
+│       ├── TaskForm.jsx          # Create / edit task form with AI date suggest
 │       └── ThemeToggle.jsx       # Dark / light mode toggle
 ├── context/
+│   ├── AIContext.jsx             # Gemini AI — chat sessions, briefing, suggestions
 │   ├── AuthContext.jsx           # Firebase auth state + Firestore user profile
 │   ├── TaskContext.jsx           # Firestore real-time task CRUD
 │   └── ThemeContext.jsx          # Theme state management
@@ -199,7 +214,10 @@ VITE_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
 VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+VITE_GEMINI_API_KEY=your_gemini_api_key
 ```
+
+> Get a free Gemini API key at [aistudio.google.com](https://aistudio.google.com/app/apikey). No billing required.
 
 ### Run locally
 
@@ -236,6 +254,16 @@ The `vercel.json` file is already configured to handle client-side routing:
 
 Go to **Firebase Console → Authentication → Settings → Authorized domains** and add your Vercel deployment URL (e.g. `taskflow-xyz.vercel.app`).
 
+### Firestore rules for AI chat sessions
+
+Add this rule to your existing Firestore security rules to protect AI chat data:
+
+```js
+match /aiChats/{uid}/{document=**} {
+  allow read, write: if request.auth != null && request.auth.uid == uid;
+}
+```
+
 ---
 
 ## 🎨 Design System
@@ -254,4 +282,4 @@ MIT — free to use and modify.
 
 ---
 
-> Built with ⚡ and caffeine
+> Built with ⚡, caffeine, and a little help from Gemini AI

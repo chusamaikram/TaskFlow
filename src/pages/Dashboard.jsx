@@ -1,14 +1,17 @@
-import { useState, useMemo } from "react";
-import { Plus, Search, CheckCircle2, Clock, ListTodo, TrendingUp, Pencil, Trash2, CheckCheck, Eye } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { Plus, Search, CheckCircle2, Clock, ListTodo, TrendingUp, Pencil, Trash2, CheckCheck, Eye, Sparkles, X } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useTasks } from "../context/TaskContext";
 import { useAuth } from "../context/AuthContext";
+import { useAI } from "../context/AIContext";
 import Button from "../components/ui/Button";
 import Modal from "../components/ui/Modal";
 import ConfirmModal from "../components/ui/ConfirmModal";
 import TaskForm from "../components/ui/TaskForm";
 import StatsCard from "../components/ui/StatsCard";
 import Badge from "../components/ui/Badge";
+import AIAssistant from "../components/ui/AIAssistant";
 
 const TABS = [
   { key: "all",        label: "All",         color: "text-cyan-500"   },
@@ -29,6 +32,7 @@ function formatDate(val) {
 export default function Dashboard() {
   const { tasks, tasksLoading, addTask, updateTask, deleteTask } = useTasks();
   const { user } = useAuth();
+  const { briefing, briefingLoading, generateBriefing, explainTask } = useAI();
   const [search, setSearch]             = useState("");
   const [filterPriority, setFilterPriority] = useState("all");
   const [activeTab, setActiveTab]       = useState("all");
@@ -36,6 +40,31 @@ export default function Dashboard() {
   const [editTask, setEditTask]         = useState(null);
   const [viewTask, setViewTask]         = useState(null);
   const [deleteId, setDeleteId]         = useState(null);
+  const [aiOpen, setAiOpen]             = useState(false);
+  const [aiPrompt, setAiPrompt]         = useState(null);
+  const [briefingDismissed, setBriefingDismissed] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Open AI from sidebar/header button via ?ai=1
+  useEffect(() => {
+    if (searchParams.get("ai") === "1") {
+      setAiOpen(true);
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams]);
+
+  // Generate briefing once when tasks load
+  useEffect(() => {
+    if (!tasksLoading && tasks.length > 0 && !briefing && !briefingLoading) {
+      generateBriefing();
+    }
+  }, [tasksLoading]);
+
+  const handleExplainTask = async (task) => {
+    const prompt = await explainTask(task);
+    setAiPrompt(prompt);
+    setAiOpen(true);
+  };
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
@@ -84,6 +113,23 @@ export default function Dashboard() {
           <Button onClick={() => setCreateOpen(true)} size="sm"><Plus size={15} /> New Task</Button>
         </div>
       </div>
+
+      {/* AI Daily Briefing */}
+      {briefing && !briefingDismissed && (
+        <div
+          className="mb-6 rounded-xl px-4 py-3 flex items-start gap-3 animate-fade-in"
+          style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.18)" }}
+        >
+          <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+            style={{ background: "linear-gradient(135deg, #06b6d4, #0891b2)" }}>
+            <Sparkles size={12} className="text-white" />
+          </div>
+          <p className="flex-1 text-sm" style={{ color: "#94a3b8" }}>{briefing}</p>
+          <button onClick={() => setBriefingDismissed(true)} className="text-slate-500 hover:text-slate-300 transition-colors flex-shrink-0">
+            <X size={14} />
+          </button>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
@@ -195,12 +241,13 @@ export default function Dashboard() {
                   <div className="text-xs font-mono text-slate-500">{formatDate(task.createdAt)}</div>
                   <div className={`text-xs font-mono ${task.dueDate ? "text-slate-700 dark:text-slate-300" : "text-slate-400"}`}>{formatDate(task.dueDate)}</div>
                   <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                    <button title="View"   className="p-1.5 rounded-lg text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all"   onClick={() => setViewTask(task)}><Eye size={13} /></button>
-                    <button title="Edit"   className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10 transition-all" onClick={() => setEditTask(task)}><Pencil size={13} /></button>
+                    <button title="View"    className="p-1.5 rounded-lg text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all"    onClick={() => setViewTask(task)}><Eye size={13} /></button>
+                    <button title="Edit"    className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10 transition-all"  onClick={() => setEditTask(task)}><Pencil size={13} /></button>
+                    <button title="Explain" className="p-1.5 rounded-lg text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all"    onClick={() => handleExplainTask(task)}><Sparkles size={13} /></button>
                     {task.status !== "done" && (
                       <button title="Mark done" className="p-1.5 rounded-lg text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all" onClick={() => handleComplete(task.id)}><CheckCheck size={13} /></button>
                     )}
-                    <button title="Delete" className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/[0.08] transition-all"  onClick={() => setDeleteId(task.id)}><Trash2 size={13} /></button>
+                    <button title="Delete" className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/[0.08] transition-all"   onClick={() => setDeleteId(task.id)}><Trash2 size={13} /></button>
                   </div>
                 </div>
               ))}
@@ -286,11 +333,20 @@ export default function Dashboard() {
 
             <div className="flex gap-3 pt-1">
               <Button variant="outline" size="sm" className="flex-1" onClick={() => { setViewTask(null); setEditTask(viewTask); }}>Edit Task</Button>
-              <Button variant="danger"  size="sm" className="flex-1" onClick={() => { setViewTask(null); setDeleteId(viewTask.id); }}>Delete</Button>
+              <Button variant="ghost" size="sm" onClick={() => { handleExplainTask(viewTask); setViewTask(null); }}>
+                <Sparkles size={13} /> Ask AI
+              </Button>
+              <Button variant="danger" size="sm" className="flex-1" onClick={() => { setViewTask(null); setDeleteId(viewTask.id); }}>Delete</Button>
             </div>
           </div>
         )}
       </Modal>
+
+      <AIAssistant
+        isOpen={aiOpen}
+        onClose={() => { setAiOpen(false); setAiPrompt(null); }}
+        initialPrompt={aiPrompt}
+      />
     </div>
   );
 }

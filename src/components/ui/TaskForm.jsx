@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 import Button from "./Button";
 import Input from "./Input";
+import { useAI } from "../../context/AIContext";
 
 const CATEGORIES = ["Design", "Engineering", "Product", "Management", "Marketing", "Other"];
 const PRIORITIES  = ["high", "medium", "low"];
@@ -23,6 +25,7 @@ function ToggleBtn({ active, onClick, children }) {
 }
 
 export default function TaskForm({ initial = {}, onSubmit, onCancel }) {
+  const { suggestDueDate } = useAI();
   const [form, setForm] = useState({
     title:       initial.title       || "",
     description: initial.description || "",
@@ -33,7 +36,18 @@ export default function TaskForm({ initial = {}, onSubmit, onCancel }) {
     tags:        initial.tags?.join(", ") || "",
   });
   const [errors, setErrors] = useState({});
+  const [suggestingDate, setSuggestingDate] = useState(false);
   const set = (key, value) => setForm((f) => ({ ...f, [key]: value }));
+
+  const handleSuggestDate = async () => {
+    if (!form.title.trim()) { setErrors({ title: "Enter a title first" }); return; }
+    setSuggestingDate(true);
+    try {
+      const date = await suggestDueDate(form.title, form.priority, form.category);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(date)) set("dueDate", date);
+    } catch {}
+    finally { setSuggestingDate(false); }
+  };
 
   const handleSubmit = () => {
     if (!form.title.trim()) { setErrors({ title: "Title is required" }); return; }
@@ -71,7 +85,22 @@ export default function TaskForm({ initial = {}, onSubmit, onCancel }) {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Input label="Due Date" type="date" value={form.dueDate} onChange={(e) => set("dueDate", e.target.value)} />
+        <div>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="text-sm font-medium text-slate-400">Due Date</label>
+            <button
+              type="button"
+              onClick={handleSuggestDate}
+              disabled={suggestingDate}
+              className="flex items-center gap-1 text-xs transition-colors"
+              style={{ color: "#06b6d4" }}
+            >
+              <Sparkles size={11} />
+              {suggestingDate ? "Thinking..." : "AI suggest"}
+            </button>
+          </div>
+          <input type="date" className="input-field" value={form.dueDate} onChange={(e) => set("dueDate", e.target.value)} />
+        </div>
         <Input label="Tags (comma separated)" placeholder="UI, Frontend" value={form.tags} onChange={(e) => set("tags", e.target.value)} />
       </div>
 

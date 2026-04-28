@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Mail, Zap, ArrowLeft, CheckCircle2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
@@ -14,6 +14,7 @@ export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const { resetPassword } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,7 +80,7 @@ export default function ForgotPassword() {
                 Didn't receive it? Check your spam or{" "}
                 <button onClick={() => setSent(false)} className="font-semibold text-cyan-500 hover:text-cyan-400 transition-colors">try again</button>
               </p>
-              <Button className="w-full" size="lg" onClick={() => window.location.href = "/login"}>Back to Sign In</Button>
+              <Button className="w-full" size="lg" onClick={() => navigate("/login")}>Back to Sign In</Button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">

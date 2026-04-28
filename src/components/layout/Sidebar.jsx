@@ -71,6 +71,7 @@ function SidebarContent({ collapsed, onCollapse, onClose, isMobile }) {
             {(!collapsed || isMobile) && <span>{label}</span>}
           </NavLink>
         ))}
+
       </nav>
 
       {/* Bottom user card */}
