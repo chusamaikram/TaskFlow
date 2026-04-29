@@ -98,13 +98,33 @@ export function AIProvider({ children }) {
       createdAt: serverTimestamp(),
     });
 
-    // Build chat history excluding the current message (last 20, skip last user msg)
-    const history = messages.slice(-20).filter((m) => m.text).map((m) => ({
-      role: m.role === "user" ? "user" : "model",
-      parts: [{ text: m.text }],
-    }));
+    // Build chat history with system context as the first turn for better compatibility
+    const systemPrompt = buildSystemContext(tasks, user);
+    const history = [
+      { role: "user", parts: [{ text: systemPrompt }] },
+      { role: "model", parts: [{ text: "Understood. I am your TaskFlow AI assistant. I have access to your tasks and will help you manage them. How can I help you today?" }] },
+    ];
 
-    const chat = getModel(buildSystemContext(tasks, user)).startChat({ history });
+    messages.forEach((m) => {
+      if (!m.text) return;
+      const role = m.role === "user" ? "user" : "model";
+      // Only add if it alternates the role
+      if (history[history.length - 1].role !== role) {
+        history.push({ role, parts: [{ text: m.text }] });
+      } else {
+        // Append to last message if same role
+        history[history.length - 1].parts[0].text += "\n" + m.text;
+      }
+    });
+
+    // Remove the very last message if it's from 'user' (it's the one we're about to send)
+    if (history[history.length - 1].role === "user") {
+      history.pop();
+    }
+
+    const slicedHistory = history.slice(-21); // Keep system pair + up to 19 messages
+
+    const chat = getModel().startChat({ history: slicedHistory });
 
     // Add optimistic AI message
     const aiDocRef = await addDoc(collection(db, "aiChats", user.uid, "sessions", sid, "messages"), {
@@ -161,7 +181,8 @@ export function AIProvider({ children }) {
       const prompt = `Give a 2-sentence daily briefing. Overdue: ${overdue.length}, Due today: ${dueToday.length}, In progress: ${inProgress.length}. Be direct and motivating.`;
       const result = await getModel().generateContent(prompt);
       setBriefing(result.response.text());
-    } catch {
+    } catch (err) {
+      console.error("Briefing error:", err);
       setBriefing(null);
     } finally {
       setBriefingLoading(false);
