@@ -18,4 +18,4 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-export const getModel = (systemInstruction) => genAI.getGenerativeModel({ model: "gemini-2.5-flash", systemInstruction });
+export const getModel = (systemInstruction) => genAI.getGenerativeModel({ model: "gemma-3-4b-it", systemInstruction });
